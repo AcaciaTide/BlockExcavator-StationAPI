@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "stapiultimine",
+  "version": "${version}",
+
+  "name": "StAPI Ultimine",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "AcaciaTide"
+  ],
+  "contact": {
+    "homepage": "https://glass-launcher.net/",
+    "sources": "https://github.com/calmilamsy/stationapi-example-mod"
+  },
+
+  "license": "MIT",
+  "icon": "assets/stapiultimine/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "stationapi:event_bus": [
+      "io.github.acaciatide.stapiultimine.events.init.InitListener"
+    ],
+    "stationapi:event_bus_client": [
+    ],
+    "stationapi:event_bus_server": [
+    ]
+  },
+  "mixins": [
+    "stapiultimine.mixins.json"
+  ],
+
+  "depends": {
+    "minecraft": "1.0.0-beta.7.3"
+  }
+}
