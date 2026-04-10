@@ -2,6 +2,7 @@ package io.github.acaciatide.stapiultimine.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import java.util.HashSet;
@@ -19,6 +20,9 @@ public class VeinMinerUtil {
      */
     public static void mineVein(World world, PlayerEntity player, int startX, int startY, int startZ, Block block, int meta) {
         if (isMining) return;
+        
+        // ツールの適正チェック: アイテム化できない場合は一括破壊を行わない
+        if (!player.canHarvest(block)) return;
         isMining = true;
 
         try {
@@ -46,7 +50,19 @@ public class VeinMinerUtil {
                     // アイテムドロップ処理や経験値・統計処理を呼び出す
                     block.afterBreak(world, player, pos.x, pos.y, pos.z, currentMeta);
 
-                    // TODO: ツール耐久値の消費処理をここに追加する
+                    // 手持ちアイテム（ツール）の耐久値消費
+                    ItemStack heldItem = player.getHand();
+                    if (heldItem != null && heldItem.isDamageable()) {
+                        heldItem.damage(1, player);
+                        
+                        // 耐久値がゼロになり破損した場合
+                        if (heldItem.count <= 0) {
+                            heldItem.onRemoved(player);
+                            player.clearStackInHand();
+                            // ツールが壊れたため、残りの連鎖を安全に終了させる
+                            break;
+                        }
+                    }
 
                     minedCount++;
                     addNeighbors(queue, visited, pos.x, pos.y, pos.z);

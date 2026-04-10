@@ -22,6 +22,7 @@
       "io.github.acaciatide.stapiultimine.events.init.InitListener"
     ],
     "stationapi:event_bus_client": [
+      "io.github.acaciatide.stapiultimine.events.init.ClientInitListener"
     ],
     "stationapi:event_bus_server": [
     ]
