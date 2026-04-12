@@ -30,32 +30,21 @@ public class VeinMinerUtil {
         isMining = true;
 
         try {
-            int blockId = block.id;
-            // 設定から最大ブロック数を取得。(念のため1〜256の範囲に収める)
-            int maxBlocks = Math.max(1, Math.min(256, ConfigInit.CONFIG.maxBlocks));
-            int minedCount = 0;
-
-            Queue<BlockPos> queue = new LinkedList<>();
-            Set<BlockPos> visited = new HashSet<>();
-
-            // 最初の一歩（自分が壊したブロックの周囲）
-            // 開始地点自体はInteractionManager側で壊されるため、ここでの重複破壊を防ぐために訪問済みに登録しておく
-            visited.add(new BlockPos(startX, startY, startZ));
-            addNeighbors(queue, visited, startX, startY, startZ);
-
-            while (!queue.isEmpty() && minedCount < maxBlocks) {
-                BlockPos pos = queue.poll();
+            Set<BlockPos> blocksToMine = getVeinBlocks(world, startX, startY, startZ, block, meta);
+            
+            for (BlockPos pos : blocksToMine) {
+                // 開始地点自体はInteractionManager側で壊されるためスキップする
+                if (pos.x == startX && pos.y == startY && pos.z == startZ) continue;
 
                 int currentId = world.getBlockId(pos.x, pos.y, pos.z);
                 int currentMeta = world.getBlockMeta(pos.x, pos.y, pos.z);
 
-                // 同種ブロック（IDとメタデータが一致）か確認
-                if (currentId == blockId && currentMeta == meta) {
+                // ブロックがまだ存在し、種類が一致しているか再確認
+                if (currentId == block.id && currentMeta == meta) {
                     // ブロックを空気(0)に置換
                     world.setBlock(pos.x, pos.y, pos.z, 0);
                     
                     // 適正ツールがある場合のみ、アイテムドロップや統計処理を呼び出す
-                    // (無条件破壊で素手の時はアイテム化しない)
                     if (canHarvest) {
                         block.afterBreak(world, player, pos.x, pos.y, pos.z, currentMeta);
                     }
@@ -65,24 +54,50 @@ public class VeinMinerUtil {
                         ItemStack heldItem = player.getHand();
                         if (heldItem != null && heldItem.isDamageable()) {
                             heldItem.damage(1, player);
-                            
-                            // 耐久値がゼロになり破損した場合
                             if (heldItem.count <= 0) {
                                 heldItem.onRemoved(player);
                                 player.clearStackInHand();
-                                // ツールが壊れたため、残りの連鎖を安全に終了させる
                                 break;
                             }
                         }
                     }
-
-                    minedCount++;
-                    addNeighbors(queue, visited, pos.x, pos.y, pos.z);
                 }
             }
         } finally {
             isMining = false;
         }
+    }
+
+    /**
+     * 一括破壊の対象となるブロックの座標セットを取得する
+     */
+    public static Set<BlockPos> getVeinBlocks(World world, int startX, int startY, int startZ, Block block, int meta) {
+        Set<BlockPos> blocks = new HashSet<>();
+        if (block == null) return blocks;
+
+        int blockId = block.id;
+        int maxBlocks = Math.max(1, Math.min(256, ConfigInit.CONFIG.maxBlocks));
+        
+        Queue<BlockPos> queue = new LinkedList<>();
+        Set<BlockPos> visited = new HashSet<>();
+
+        BlockPos start = new BlockPos(startX, startY, startZ);
+        visited.add(start);
+        blocks.add(start);
+        addNeighbors(queue, visited, startX, startY, startZ);
+
+        while (!queue.isEmpty() && blocks.size() < maxBlocks) {
+            BlockPos pos = queue.poll();
+
+            int currentId = world.getBlockId(pos.x, pos.y, pos.z);
+            int currentMeta = world.getBlockMeta(pos.x, pos.y, pos.z);
+
+            if (currentId == blockId && currentMeta == meta) {
+                blocks.add(pos);
+                addNeighbors(queue, visited, pos.x, pos.y, pos.z);
+            }
+        }
+        return blocks;
     }
 
     private static void addNeighbors(Queue<BlockPos> queue, Set<BlockPos> visited, int x, int y, int z) {
@@ -100,9 +115,9 @@ public class VeinMinerUtil {
         }
     }
 
-    private static class BlockPos {
-        final int x, y, z;
-        BlockPos(int x, int y, int z) {
+    public static class BlockPos {
+        public final int x, y, z;
+        public BlockPos(int x, int y, int z) {
             this.x = x; this.y = y; this.z = z;
         }
         @Override
