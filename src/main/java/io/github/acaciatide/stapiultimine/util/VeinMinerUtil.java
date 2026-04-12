@@ -26,6 +26,7 @@ public class VeinMinerUtil {
         boolean canHarvest = player.canHarvest(block);
         // 無条件破壊がオフ かつ 適正ツールでない場合は一括破壊を中止する
         if (!ConfigInit.CONFIG.forceVeinMine && !canHarvest) return;
+        if (block == null) return;
         isMining = true;
 
         try {
@@ -38,6 +39,8 @@ public class VeinMinerUtil {
             Set<BlockPos> visited = new HashSet<>();
 
             // 最初の一歩（自分が壊したブロックの周囲）
+            // 開始地点自体はInteractionManager側で壊されるため、ここでの重複破壊を防ぐために訪問済みに登録しておく
+            visited.add(new BlockPos(startX, startY, startZ));
             addNeighbors(queue, visited, startX, startY, startZ);
 
             while (!queue.isEmpty() && minedCount < maxBlocks) {
