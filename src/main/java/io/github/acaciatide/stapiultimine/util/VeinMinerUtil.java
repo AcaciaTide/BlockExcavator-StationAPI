@@ -2,6 +2,7 @@ package io.github.acaciatide.stapiultimine.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -21,13 +22,16 @@ public class VeinMinerUtil {
     public static void mineVein(World world, PlayerEntity player, int startX, int startY, int startZ, Block block, int meta) {
         if (isMining) return;
         
-        // ツールの適正チェック: アイテム化できない場合は一括破壊を行わない
-        if (!player.canHarvest(block)) return;
+        // ツールの適正チェック
+        boolean canHarvest = player.canHarvest(block);
+        // 無条件破壊がオフ かつ 適正ツールでない場合は一括破壊を中止する
+        if (!ConfigInit.CONFIG.forceVeinMine && !canHarvest) return;
         isMining = true;
 
         try {
             int blockId = block.id;
-            int maxBlocks = 64; // MVP機能としてのハードリミット
+            // 設定から最大ブロック数を取得。(念のため1〜256の範囲に収める)
+            int maxBlocks = Math.max(1, Math.min(256, ConfigInit.CONFIG.maxBlocks));
             int minedCount = 0;
 
             Queue<BlockPos> queue = new LinkedList<>();
@@ -47,20 +51,25 @@ public class VeinMinerUtil {
                     // ブロックを空気(0)に置換
                     world.setBlock(pos.x, pos.y, pos.z, 0);
                     
-                    // アイテムドロップ処理や経験値・統計処理を呼び出す
-                    block.afterBreak(world, player, pos.x, pos.y, pos.z, currentMeta);
+                    // 適正ツールがある場合のみ、アイテムドロップや統計処理を呼び出す
+                    // (無条件破壊で素手の時はアイテム化しない)
+                    if (canHarvest) {
+                        block.afterBreak(world, player, pos.x, pos.y, pos.z, currentMeta);
+                    }
 
                     // 手持ちアイテム（ツール）の耐久値消費
-                    ItemStack heldItem = player.getHand();
-                    if (heldItem != null && heldItem.isDamageable()) {
-                        heldItem.damage(1, player);
-                        
-                        // 耐久値がゼロになり破損した場合
-                        if (heldItem.count <= 0) {
-                            heldItem.onRemoved(player);
-                            player.clearStackInHand();
-                            // ツールが壊れたため、残りの連鎖を安全に終了させる
-                            break;
+                    if (ConfigInit.CONFIG.consumeDurability) {
+                        ItemStack heldItem = player.getHand();
+                        if (heldItem != null && heldItem.isDamageable()) {
+                            heldItem.damage(1, player);
+                            
+                            // 耐久値がゼロになり破損した場合
+                            if (heldItem.count <= 0) {
+                                heldItem.onRemoved(player);
+                                player.clearStackInHand();
+                                // ツールが壊れたため、残りの連鎖を安全に終了させる
+                                break;
+                            }
                         }
                     }
 

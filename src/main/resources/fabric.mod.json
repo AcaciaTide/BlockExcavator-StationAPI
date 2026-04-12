@@ -25,6 +25,9 @@
       "io.github.acaciatide.stapiultimine.events.init.ClientInitListener"
     ],
     "stationapi:event_bus_server": [
+    ],
+    "gcapi3": [
+      "io.github.acaciatide.stapiultimine.config.ConfigInit"
     ]
   },
   "mixins": [
