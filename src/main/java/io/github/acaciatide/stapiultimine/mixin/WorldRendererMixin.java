@@ -41,6 +41,7 @@ public abstract class WorldRendererMixin {
         GL11.glLineWidth(2.0F);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDepthMask(false);
+        GL11.glDisable(GL11.GL_DEPTH_TEST); // 壁越しでも見えるように深度テストを無効化
 
         // プレイヤーの移動に合わせたカメラ位置の補正計算
         double offsetX = player.lastTickX + (player.x - player.lastTickX) * (double)tickDelta;
@@ -67,6 +68,7 @@ public abstract class WorldRendererMixin {
         }
 
         // OpenGLの設定を元に戻す
+        GL11.glEnable(GL11.GL_DEPTH_TEST); // 深度テストを再度有効化
         GL11.glDepthMask(true);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
