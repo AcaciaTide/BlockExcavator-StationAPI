@@ -24,4 +24,10 @@ public class StAPIUltimineConfig {
     )
     public Boolean forceVeinMine = true;
 
+    @ConfigEntry(
+        name = "Teleport Drops",
+        description = "Teleport mined item drops directly to the player."
+    )
+    public Boolean teleportDrops = false;
+
 }

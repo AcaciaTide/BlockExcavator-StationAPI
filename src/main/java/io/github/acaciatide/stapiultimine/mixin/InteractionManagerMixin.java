@@ -2,6 +2,7 @@ package io.github.acaciatide.stapiultimine.mixin;
 
 import io.github.acaciatide.stapiultimine.events.init.ClientInitListener;
 import io.github.acaciatide.stapiultimine.util.VeinMinerUtil;
+import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.block.Block;
 import net.minecraft.client.InteractionManager;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,18 @@ public class InteractionManagerMixin {
                 Block block = Block.BLOCKS[blockId];
                 // 実際にブロックが破壊される前に、その周囲の同種ブロックを破壊するロジックを呼び出す
                 VeinMinerUtil.mineVein(world, this.minecraft.player, x, y, z, block, meta);
+                
+                // バニラのブロック破壊処理（起点ブロック）向けに座標を記憶させる
+                if (ConfigInit.CONFIG.teleportDrops) {
+                    VeinMinerUtil.originBlockPos = new VeinMinerUtil.BlockPos(x, y, z);
+                    VeinMinerUtil.currentPlayer = this.minecraft.player;
+                }
             }
+        } else {
+            // 一括破壊キーが押されていない通常破壊時はリセット
+            VeinMinerUtil.originBlockPos = null;
         }
     }
+
+
 }

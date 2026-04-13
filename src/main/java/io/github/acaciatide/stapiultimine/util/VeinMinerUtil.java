@@ -16,6 +16,11 @@ public class VeinMinerUtil {
     // 再帰呼び出しを防止するためのフラグ
     private static boolean isMining = false;
 
+    // アイテムのテレポート状態を管理するためのフラグとプレイヤー情報
+    public static boolean isTeleportingDrops = false;
+    public static PlayerEntity currentPlayer = null;
+    public static BlockPos originBlockPos = null;
+
     /**
      * 起点となるブロックから周囲を探索し、同種ブロックを一括破壊する。
      */
@@ -46,7 +51,18 @@ public class VeinMinerUtil {
                     
                     // 適正ツールがある場合のみ、アイテムドロップや統計処理を呼び出す
                     if (canHarvest) {
-                        block.afterBreak(world, player, pos.x, pos.y, pos.z, currentMeta);
+                        try {
+                            if (ConfigInit.CONFIG.teleportDrops) {
+                                isTeleportingDrops = true;
+                                currentPlayer = player;
+                                block.afterBreak(world, player, (int) player.x, (int) player.y, (int) player.z, currentMeta);
+                            } else {
+                                block.afterBreak(world, player, pos.x, pos.y, pos.z, currentMeta);
+                            }
+                        } finally {
+                            isTeleportingDrops = false;
+                            currentPlayer = null;
+                        }
                     }
 
                     // 手持ちアイテム（ツール）の耐久値消費
