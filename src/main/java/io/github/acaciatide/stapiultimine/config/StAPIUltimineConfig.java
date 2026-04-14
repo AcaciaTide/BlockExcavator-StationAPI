@@ -30,4 +30,10 @@ public class StAPIUltimineConfig {
     )
     public Boolean teleportDrops = false;
 
+    @ConfigEntry(
+        name = "Display HUD Status",
+        description = "Show the vein miner status on the screen."
+    )
+    public Boolean displayHudStatus = true;
+
 }

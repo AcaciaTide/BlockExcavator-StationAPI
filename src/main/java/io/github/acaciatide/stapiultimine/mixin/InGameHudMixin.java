@@ -2,6 +2,7 @@ package io.github.acaciatide.stapiultimine.mixin;
 
 import io.github.acaciatide.stapiultimine.events.init.ClientInitListener;
 import io.github.acaciatide.stapiultimine.util.UltimineRenderCache;
+import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.hud.InGameHud;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +19,7 @@ public class InGameHudMixin {
 
     @Inject(method = "render(FZII)V", at = @At("TAIL"))
     private void renderHUD(float tickDelta, boolean screenOpen, int mouseX, int mouseY, CallbackInfo ci) {
-        if (ClientInitListener.isUltimineKeyPressed()) {
+        if (ClientInitListener.isUltimineKeyPressed() && ConfigInit.CONFIG.displayHudStatus) {
             if (UltimineRenderCache.cachedBlockCount > 0) {
                 // 有効時: 白色でステータスとモードを表示
                 this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Enabled", 5, 5, 0xFFFFFF);
