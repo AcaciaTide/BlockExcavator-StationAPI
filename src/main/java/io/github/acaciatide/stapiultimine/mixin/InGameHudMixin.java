@@ -22,11 +22,11 @@ public class InGameHudMixin {
         if (ClientInitListener.isUltimineKeyPressed() && ConfigInit.CONFIG.displayHudStatus) {
             if (UltimineRenderCache.cachedBlockCount > 0) {
                 // 有効時: 白色でステータスとモードを表示
-                this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Enabled", 5, 5, 0xFFFFFF);
-                this.minecraft.textRenderer.drawWithShadow("Mode: Shapeless (" + UltimineRenderCache.cachedBlockCount + ")", 5, 15, 0xFFFFFF);
+                this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Enabled", 5, 15, 0xFFFFFF);
+                this.minecraft.textRenderer.drawWithShadow("Mode: Shapeless (" + UltimineRenderCache.cachedBlockCount + ")", 5, 25, 0xFFFFFF);
             } else {
                 // 無効時: 灰色でDisabledのみ表示
-                this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Disabled", 5, 5, 0xAAAAAA);
+                this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Disabled", 5, 15, 0xAAAAAA);
             }
         }
     }
