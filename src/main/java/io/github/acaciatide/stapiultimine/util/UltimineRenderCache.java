@@ -49,6 +49,9 @@ public class UltimineRenderCache {
     
     // 計算済みの「外側だけを残した」線のリスト
     public static List<LineSegment> cachedLines = Collections.emptyList();
+    
+    // 計算済みの対象ブロック数
+    public static int cachedBlockCount = 0;
 
     // 6方向を調べるための座標オフセット (Y-, Y+, Z-, Z+, X-, X+)
     private static final int[][] OFFSETS = {
@@ -71,6 +74,7 @@ public class UltimineRenderCache {
     public static void updateCache(World world, HitResult hit) {
         if (!ClientInitListener.isUltimineKeyPressed() || hit == null || hit.type != HitResultType.BLOCK) {
             cachedLines = Collections.emptyList();
+            cachedBlockCount = 0;
             lastX = lastY = lastZ = Integer.MIN_VALUE;
             return;
         }
@@ -97,8 +101,11 @@ public class UltimineRenderCache {
 
         if (targets.isEmpty()) {
             cachedLines = Collections.emptyList();
+            cachedBlockCount = 0;
             return;
         }
+        
+        cachedBlockCount = targets.size();
 
         // 輪郭メッシュ抽出ロジック
         Map<Edge, Set<Integer>> edgeNormals = new HashMap<>();
