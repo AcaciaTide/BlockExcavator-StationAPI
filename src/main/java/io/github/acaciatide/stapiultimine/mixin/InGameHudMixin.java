@@ -2,6 +2,7 @@ package io.github.acaciatide.stapiultimine.mixin;
 
 import io.github.acaciatide.stapiultimine.events.init.ClientInitListener;
 import io.github.acaciatide.stapiultimine.util.UltimineRenderCache;
+import io.github.acaciatide.stapiultimine.util.VeinMinerUtil;
 import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -23,10 +24,16 @@ public class InGameHudMixin {
             if (UltimineRenderCache.cachedBlockCount > 0) {
                 // 有効時: 白色でステータスとモードを表示
                 this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Enabled", 5, 15, 0xFFFFFF);
-                this.minecraft.textRenderer.drawWithShadow("Mode: Shapeless (" + UltimineRenderCache.cachedBlockCount + ")", 5, 25, 0xFFFFFF);
+                this.minecraft.textRenderer.drawWithShadow("Mode: " + VeinMinerUtil.currentMode.getName() + " (" + UltimineRenderCache.cachedBlockCount + ")", 5, 25, 0xFFFFFF);
             } else {
                 // 無効時: 灰色でDisabledのみ表示
                 this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Disabled", 5, 15, 0xAAAAAA);
+            }
+            
+            // スニーク（シフト等）を押している時にだけ操作案内を追加表示
+            if (this.minecraft.options != null && org.lwjgl.input.Keyboard.isKeyDown(this.minecraft.options.sneakKey.code)) {
+                this.minecraft.textRenderer.drawWithShadow("Mouse wheel up: " + VeinMinerUtil.getNextModeName(), 5, 35, 0xFFFFAA);
+                this.minecraft.textRenderer.drawWithShadow("Mouse wheel down: " + VeinMinerUtil.getPrevModeName(), 5, 45, 0xFFFFAA);
             }
         }
     }

@@ -20,6 +20,37 @@ public class VeinMinerUtil {
     public static boolean isTeleportingDrops = false;
     public static PlayerEntity currentPlayer = null;
     public static BlockPos originBlockPos = null;
+    public static VeinMineMode currentMode = VeinMineMode.SHAPELESS;
+
+    /**
+     * モードを次の値に循環させる。方向が正なら次へ、負なら前へ。
+     * @param direction スクロールの方向
+     */
+    public static void cycleMode(int direction) {
+        VeinMineMode[] modes = VeinMineMode.values();
+        int nextIndex = currentMode.ordinal();
+        if (direction > 0) {
+            nextIndex = (nextIndex + 1) % modes.length;
+        } else if (direction < 0) {
+            nextIndex = (nextIndex - 1 + modes.length) % modes.length;
+        }
+        currentMode = modes[nextIndex];
+        
+        // モードが変わったらレンダリングキャッシュを強制的にリセットして再計算させる
+        UltimineRenderCache.resetCache();
+    }
+
+    public static String getNextModeName() {
+        VeinMineMode[] modes = VeinMineMode.values();
+        int nextIndex = (currentMode.ordinal() + 1) % modes.length;
+        return modes[nextIndex].getName();
+    }
+
+    public static String getPrevModeName() {
+        VeinMineMode[] modes = VeinMineMode.values();
+        int prevIndex = (currentMode.ordinal() - 1 + modes.length) % modes.length;
+        return modes[prevIndex].getName();
+    }
 
     /**
      * 起点となるブロックから周囲を探索し、同種ブロックを一括破壊する。

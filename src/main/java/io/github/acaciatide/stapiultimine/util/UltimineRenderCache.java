@@ -178,4 +178,11 @@ public class UltimineRenderCache {
         }
         cachedLines = result;
     }
+    
+    /**
+     * キャッシュを強制的にリセットし、次回のupdateCacheで再計算を走らせるようにする。
+     */
+    public static void resetCache() {
+        lastX = lastY = lastZ = Integer.MIN_VALUE;
+    }
 }

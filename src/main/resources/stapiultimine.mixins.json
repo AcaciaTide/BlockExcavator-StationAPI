@@ -7,7 +7,8 @@
         "InteractionManagerMixin",
         "WorldRendererMixin",
         "ItemEntityMixin",
-        "InGameHudMixin"
+        "InGameHudMixin",
+        "PlayerInventoryMixin"
     ],
   "server": [
   ],
