@@ -35,7 +35,7 @@ public class InteractionManagerMixin {
                 
                 // バニラのブロック破壊処理（起点ブロック）向けに座標を記憶させる
                 if (ConfigInit.CONFIG.teleportDrops) {
-                    VeinMinerUtil.originBlockPos = new VeinMinerUtil.BlockPos(x, y, z);
+                    VeinMinerUtil.originBlockPos = new net.minecraft.util.math.BlockPos(x, y, z);
                     VeinMinerUtil.currentPlayer = this.minecraft.player;
                 }
             }

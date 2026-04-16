@@ -5,6 +5,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraft.util.math.BlockPos;
+import net.modificationstation.stationapi.api.util.math.MutableBlockPos;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -70,15 +72,15 @@ public class VeinMinerUtil {
             
             for (BlockPos pos : blocksToMine) {
                 // 開始地点自体はInteractionManager側で壊されるためスキップする
-                if (pos.x == startX && pos.y == startY && pos.z == startZ) continue;
+                if (pos.getX() == startX && pos.getY() == startY && pos.getZ() == startZ) continue;
 
-                int currentId = world.getBlockId(pos.x, pos.y, pos.z);
-                int currentMeta = world.getBlockMeta(pos.x, pos.y, pos.z);
+                int currentId = world.getBlockId(pos.getX(), pos.getY(), pos.getZ());
+                int currentMeta = world.getBlockMeta(pos.getX(), pos.getY(), pos.getZ());
 
                 // ブロックがまだ存在し、種類が一致しているか再確認
                 if (currentId == block.id && currentMeta == meta) {
                     // ブロックを空気(0)に置換
-                    world.setBlock(pos.x, pos.y, pos.z, 0);
+                    world.setBlock(pos.getX(), pos.getY(), pos.getZ(), 0);
                     
                     // 適正ツールがある場合のみ、アイテムドロップや統計処理を呼び出す
                     if (canHarvest) {
@@ -88,7 +90,7 @@ public class VeinMinerUtil {
                                 currentPlayer = player;
                                 block.afterBreak(world, player, (int) player.x, (int) player.y, (int) player.z, currentMeta);
                             } else {
-                                block.afterBreak(world, player, pos.x, pos.y, pos.z, currentMeta);
+                                block.afterBreak(world, player, pos.getX(), pos.getY(), pos.getZ(), currentMeta);
                             }
                         } finally {
                             isTeleportingDrops = false;
@@ -127,59 +129,40 @@ public class VeinMinerUtil {
         
         Queue<BlockPos> queue = new LinkedList<>();
         Set<BlockPos> visited = new HashSet<>();
+        MutableBlockPos mutablePos = new MutableBlockPos();
 
         BlockPos start = new BlockPos(startX, startY, startZ);
         visited.add(start);
         blocks.add(start);
-        addNeighbors(queue, visited, startX, startY, startZ);
+        addNeighbors(queue, visited, startX, startY, startZ, mutablePos);
 
         while (!queue.isEmpty() && blocks.size() < maxBlocks) {
             BlockPos pos = queue.poll();
 
-            int currentId = world.getBlockId(pos.x, pos.y, pos.z);
-            int currentMeta = world.getBlockMeta(pos.x, pos.y, pos.z);
+            int currentId = world.getBlockId(pos.getX(), pos.getY(), pos.getZ());
+            int currentMeta = world.getBlockMeta(pos.getX(), pos.getY(), pos.getZ());
 
             if (currentId == blockId && currentMeta == meta) {
                 blocks.add(pos);
-                addNeighbors(queue, visited, pos.x, pos.y, pos.z);
+                addNeighbors(queue, visited, pos.getX(), pos.getY(), pos.getZ(), mutablePos);
             }
         }
         return blocks;
     }
 
-    private static void addNeighbors(Queue<BlockPos> queue, Set<BlockPos> visited, int x, int y, int z) {
+    private static void addNeighbors(Queue<BlockPos> queue, Set<BlockPos> visited, int x, int y, int z, MutableBlockPos mutablePos) {
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 for (int dz = -1; dz <= 1; dz++) {
                     if (dx == 0 && dy == 0 && dz == 0) continue;
-                    BlockPos neighbor = new BlockPos(x + dx, y + dy, z + dz);
-                    if (!visited.contains(neighbor)) {
-                        visited.add(neighbor);
-                        queue.add(neighbor);
+                    mutablePos.set(x + dx, y + dy, z + dz);
+                    if (!visited.contains(mutablePos)) {
+                        BlockPos immutablePos = mutablePos.toImmutable();
+                        visited.add(immutablePos);
+                        queue.add(immutablePos);
                     }
                 }
             }
-        }
-    }
-
-    public static class BlockPos {
-        public final int x, y, z;
-        public BlockPos(int x, int y, int z) {
-            this.x = x; this.y = y; this.z = z;
-        }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            BlockPos blockPos = (BlockPos) o;
-            return x == blockPos.x && y == blockPos.y && z == blockPos.z;
-        }
-        @Override
-        public int hashCode() {
-            int result = x;
-            result = 31 * result + y;
-            result = 31 * result + z;
-            return result;
         }
     }
 }

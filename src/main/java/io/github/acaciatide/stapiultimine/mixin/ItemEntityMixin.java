@@ -19,7 +19,7 @@ public class ItemEntityMixin {
             int ix = (int) Math.floor(x);
             int iy = (int) Math.floor(y);
             int iz = (int) Math.floor(z);
-            if (ix == VeinMinerUtil.originBlockPos.x && iy == VeinMinerUtil.originBlockPos.y && iz == VeinMinerUtil.originBlockPos.z) {
+            if (ix == VeinMinerUtil.originBlockPos.getX() && iy == VeinMinerUtil.originBlockPos.getY() && iz == VeinMinerUtil.originBlockPos.getZ()) {
                 isOrigin = true;
             }
         }

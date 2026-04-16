@@ -7,6 +7,9 @@ import net.minecraft.util.hit.HitResultType;
 import net.minecraft.world.World;
 
 import java.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.modificationstation.stationapi.api.util.math.Direction;
+import net.modificationstation.stationapi.api.util.math.MutableBlockPos;
 
 public class UltimineRenderCache {
 
@@ -53,17 +56,10 @@ public class UltimineRenderCache {
     // 計算済みの対象ブロック数
     public static int cachedBlockCount = 0;
 
-    // 6方向を調べるための座標オフセット (Y-, Y+, Z-, Z+, X-, X+)
-    private static final int[][] OFFSETS = {
-            {0, -1, 0}, {0, 1, 0},   
-            {0, 0, -1}, {0, 0, 1},   
-            {-1, 0, 0}, {1, 0, 0}    
-    };
-
     /**
      * MapにEdgeとそれを共有する面の法線(方向)を記録する
      */
-    private static void addEdge(Map<Edge, Set<Integer>> map, byte axis, int x, int y, int z, int dir) {
+    private static void addEdge(Map<Edge, Set<Direction>> map, byte axis, int x, int y, int z, Direction dir) {
         Edge e = new Edge(axis, x, y, z);
         map.computeIfAbsent(e, k -> new HashSet<>()).add(dir);
     }
@@ -97,7 +93,7 @@ public class UltimineRenderCache {
         Block block = Block.BLOCKS[id];
         int meta = world.getBlockMeta(lastX, lastY, lastZ);
         // 通常の破壊と同じリストを取得する
-        Set<VeinMinerUtil.BlockPos> targets = VeinMinerUtil.getVeinBlocks(world, lastX, lastY, lastZ, block, meta);
+        Set<BlockPos> targets = VeinMinerUtil.getVeinBlocks(world, lastX, lastY, lastZ, block, meta);
 
         if (targets.isEmpty()) {
             cachedLines = Collections.emptyList();
@@ -108,48 +104,47 @@ public class UltimineRenderCache {
         cachedBlockCount = targets.size();
 
         // 輪郭メッシュ抽出ロジック
-        Map<Edge, Set<Integer>> edgeNormals = new HashMap<>();
+        Map<Edge, Set<Direction>> edgeNormals = new HashMap<>();
+        MutableBlockPos searchPos = new MutableBlockPos();
 
-        for (VeinMinerUtil.BlockPos pos : targets) {
-            int bx = pos.x;
-            int by = pos.y;
-            int bz = pos.z;
+        for (BlockPos pos : targets) {
+            int bx = pos.getX();
+            int by = pos.getY();
+            int bz = pos.getZ();
 
             // 各ブロックの6方向の面を調べる
-            for (int dir = 0; dir < 6; dir++) {
-                int nx = bx + OFFSETS[dir][0];
-                int ny = by + OFFSETS[dir][1];
-                int nz = bz + OFFSETS[dir][2];
+            for (Direction dir : Direction.values()) {
+                searchPos.set(bx + dir.getOffsetX(), by + dir.getOffsetY(), bz + dir.getOffsetZ());
 
                 // 隣が破壊対象でなければ、その面は「外部に露出している面（シルエットの一部）」
-                if (!targets.contains(new VeinMinerUtil.BlockPos(nx, ny, nz))) {
+                if (!targets.contains(searchPos)) {
                     // 露出した面の外周（4辺）を記録する
-                    if (dir == 0) { // Y- 面
+                    if (dir == Direction.DOWN) { // Y- 面
                         addEdge(edgeNormals, (byte)0, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)0, bx, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)2, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)2, bx+1, by, bz, dir);
-                    } else if (dir == 1) { // Y+ 面
+                    } else if (dir == Direction.UP) { // Y+ 面
                         addEdge(edgeNormals, (byte)0, bx, by+1, bz, dir);
                         addEdge(edgeNormals, (byte)0, bx, by+1, bz+1, dir);
                         addEdge(edgeNormals, (byte)2, bx, by+1, bz, dir);
                         addEdge(edgeNormals, (byte)2, bx+1, by+1, bz, dir);
-                    } else if (dir == 2) { // Z- 面
+                    } else if (dir == Direction.EAST) { // Z- 面
                         addEdge(edgeNormals, (byte)0, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)0, bx, by+1, bz, dir);
                         addEdge(edgeNormals, (byte)1, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)1, bx+1, by, bz, dir);
-                    } else if (dir == 3) { // Z+ 面
+                    } else if (dir == Direction.WEST) { // Z+ 面
                         addEdge(edgeNormals, (byte)0, bx, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)0, bx, by+1, bz+1, dir);
                         addEdge(edgeNormals, (byte)1, bx, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)1, bx+1, by, bz+1, dir);
-                    } else if (dir == 4) { // X- 面
+                    } else if (dir == Direction.NORTH) { // X- 面
                         addEdge(edgeNormals, (byte)1, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)1, bx, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)2, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)2, bx, by+1, bz, dir);
-                    } else if (dir == 5) { // X+ 面
+                    } else if (dir == Direction.SOUTH) { // X+ 面
                         addEdge(edgeNormals, (byte)1, bx+1, by, bz, dir);
                         addEdge(edgeNormals, (byte)1, bx+1, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)2, bx+1, by, bz, dir);
@@ -162,7 +157,7 @@ public class UltimineRenderCache {
         // 余分な内側の線をフィルタリング
         List<LineSegment> result = new ArrayList<>();
         
-        for (Map.Entry<Edge, Set<Integer>> entry : edgeNormals.entrySet()) {
+        for (Map.Entry<Edge, Set<Direction>> entry : edgeNormals.entrySet()) {
             // 一番外側の「角・コーナー」であれば、異なる向きの露出面が交わるので方向(法線)が2つ以上になる。
             // 面積が1（方向が1つ）のものは、平らな面上にある隣接ブロックのつなぎ目＝除外する
             if (entry.getValue().size() > 1) {
