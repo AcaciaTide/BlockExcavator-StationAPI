@@ -36,4 +36,16 @@ public class StAPIUltimineConfig {
     )
     public Boolean displayHudStatus = true;
 
+    @ConfigEntry(
+        name = "3x3 Hammer Mode",
+        description = "If true, the 3x3 mode mines any breakable blocks. If false, it only mines identical blocks."
+    )
+    public Boolean hammerMode3x3 = false;
+
+    @ConfigEntry(
+        name = "Strict Tool Check",
+        description = "Only mine blocks that can be harvested with the current tool."
+    )
+    public Boolean strictToolCheck = true;
+
 }

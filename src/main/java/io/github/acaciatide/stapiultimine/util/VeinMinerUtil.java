@@ -57,7 +57,7 @@ public class VeinMinerUtil {
     /**
      * 起点となるブロックから周囲を探索し、同種ブロックを一括破壊する。
      */
-    public static void mineVein(World world, PlayerEntity player, int startX, int startY, int startZ, Block block, int meta) {
+    public static void mineVein(World world, PlayerEntity player, int startX, int startY, int startZ, Block block, int meta, int face) {
         if (isMining) return;
         
         // ツールの適正チェック
@@ -68,7 +68,7 @@ public class VeinMinerUtil {
         isMining = true;
 
         try {
-            Set<BlockPos> blocksToMine = getVeinBlocks(world, startX, startY, startZ, block, meta);
+            Set<BlockPos> blocksToMine = getVeinBlocks(world, player, startX, startY, startZ, block, meta, face);
             
             for (BlockPos pos : blocksToMine) {
                 // 開始地点自体はInteractionManager側で壊されるためスキップする
@@ -77,20 +77,35 @@ public class VeinMinerUtil {
                 int currentId = world.getBlockId(pos.getX(), pos.getY(), pos.getZ());
                 int currentMeta = world.getBlockMeta(pos.getX(), pos.getY(), pos.getZ());
 
-                // ブロックがまだ存在し、種類が一致しているか再確認
-                if (currentId == block.id && currentMeta == meta) {
+                // ブロックがまだ存在し、モードごとの条件に合致しているか再確認
+                boolean shouldBreak = false;
+                if (currentMode == VeinMineMode.SQUARE_3X3 && ConfigInit.CONFIG.hammerMode3x3) {
+                    if (currentId > 0 && currentId != 7 && currentId != 8 && currentId != 9 && currentId != 10 && currentId != 11 && currentId != 51 && currentId != 90) {
+                        shouldBreak = true;
+                    }
+                } else {
+                    if (currentId == block.id && currentMeta == meta) {
+                        shouldBreak = true;
+                    }
+                }
+
+                if (shouldBreak) {
+                    Block currentBlock = Block.BLOCKS[currentId];
                     // ブロックを空気(0)に置換
                     world.setBlock(pos.getX(), pos.getY(), pos.getZ(), 0);
                     
+                    // 個別のブロックに対するツール適正判定
+                    boolean currentCanHarvest = player.canHarvest(currentBlock);
+                    
                     // 適正ツールがある場合のみ、アイテムドロップや統計処理を呼び出す
-                    if (canHarvest) {
+                    if (currentCanHarvest && currentBlock != null) {
                         try {
                             if (ConfigInit.CONFIG.teleportDrops) {
                                 isTeleportingDrops = true;
                                 currentPlayer = player;
-                                block.afterBreak(world, player, (int) player.x, (int) player.y, (int) player.z, currentMeta);
+                                currentBlock.afterBreak(world, player, (int) player.x, (int) player.y, (int) player.z, currentMeta);
                             } else {
-                                block.afterBreak(world, player, pos.getX(), pos.getY(), pos.getZ(), currentMeta);
+                                currentBlock.afterBreak(world, player, pos.getX(), pos.getY(), pos.getZ(), currentMeta);
                             }
                         } finally {
                             isTeleportingDrops = false;
@@ -120,11 +135,64 @@ public class VeinMinerUtil {
     /**
      * 一括破壊の対象となるブロックの座標セットを取得する
      */
-    public static Set<BlockPos> getVeinBlocks(World world, int startX, int startY, int startZ, Block block, int meta) {
+    public static Set<BlockPos> getVeinBlocks(World world, PlayerEntity player, int startX, int startY, int startZ, Block block, int meta, int face) {
         Set<BlockPos> blocks = new HashSet<>();
         if (block == null) return blocks;
 
         int blockId = block.id;
+
+        if (currentMode == VeinMineMode.SQUARE_3X3) {
+            net.modificationstation.stationapi.api.util.math.Direction dir = net.modificationstation.stationapi.api.util.math.Direction.byId(face);
+            net.modificationstation.stationapi.api.util.math.Direction.Axis axis = dir.getAxis();
+            
+            for (int d1 = -1; d1 <= 1; d1++) {
+                for (int d2 = -1; d2 <= 1; d2++) {
+                    int bx = startX;
+                    int by = startY;
+                    int bz = startZ;
+
+                    if (axis == net.modificationstation.stationapi.api.util.math.Direction.Axis.Y) {
+                        bx += d1;
+                        bz += d2;
+                    } else if (axis == net.modificationstation.stationapi.api.util.math.Direction.Axis.Z) {
+                        bx += d1;
+                        by += d2;
+                    } else if (axis == net.modificationstation.stationapi.api.util.math.Direction.Axis.X) {
+                        by += d1;
+                        bz += d2;
+                    }
+
+                    int currentId = world.getBlockId(bx, by, bz);
+                    int currentMeta = world.getBlockMeta(bx, by, bz);
+
+                    // 空気、岩盤、水、溶岩、炎、ポータルなどの削れないブロックを安全に除外
+                    if (currentId <= 0 || currentId == 7 || currentId == 8 || currentId == 9 || currentId == 10 || currentId == 11 || currentId == 51 || currentId == 90) {
+                        continue;
+                    }
+
+                    // ツール適正チェック (無条件破壊がONの時はリミッター解除)
+                    if (ConfigInit.CONFIG.strictToolCheck && !ConfigInit.CONFIG.forceVeinMine && player != null) {
+                        Block currentBlock = Block.BLOCKS[currentId];
+                        if (currentBlock != null && !player.canHarvest(currentBlock)) {
+                            continue;
+                        }
+                    }
+
+                    if (ConfigInit.CONFIG.hammerMode3x3) {
+                        // ハンマーモード：壊せるブロックなら何でも追加
+                        blocks.add(new BlockPos(bx, by, bz));
+                    } else {
+                        // 安全モード：最初にクリックしたものと同じブロックのみ追加
+                        if (currentId == blockId && currentMeta == meta) {
+                            blocks.add(new BlockPos(bx, by, bz));
+                        }
+                    }
+                }
+            }
+            return blocks;
+        }
+
+        // --- 以下は SHAPELESS モードの処理 ---
         int maxBlocks = Math.max(1, Math.min(256, ConfigInit.CONFIG.maxBlocks));
         
         Queue<BlockPos> queue = new LinkedList<>();
@@ -143,6 +211,13 @@ public class VeinMinerUtil {
             int currentMeta = world.getBlockMeta(pos.getX(), pos.getY(), pos.getZ());
 
             if (currentId == blockId && currentMeta == meta) {
+                // ツール適正チェック (無条件破壊がONの時はリミッター解除)
+                if (ConfigInit.CONFIG.strictToolCheck && !ConfigInit.CONFIG.forceVeinMine && player != null) {
+                    Block currentBlock = Block.BLOCKS[currentId];
+                    if (currentBlock != null && !player.canHarvest(currentBlock)) {
+                        continue;
+                    }
+                }
                 blocks.add(pos);
                 addNeighbors(queue, visited, pos.getX(), pos.getY(), pos.getZ(), mutablePos);
             }

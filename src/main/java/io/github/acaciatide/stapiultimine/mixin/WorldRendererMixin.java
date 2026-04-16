@@ -26,7 +26,7 @@ public abstract class WorldRendererMixin {
     public void onRenderBlockOutline(PlayerEntity player, HitResult hitResult, int i, ItemStack handStack, float tickDelta, CallbackInfo ci) {
         
         // まず現在の視点に合わせてキャッシュを更新させる
-        UltimineRenderCache.updateCache(this.world, hitResult);
+        UltimineRenderCache.updateCache(this.world, player, hitResult);
 
         // 事前に計算済みの「シルエットのアウトライン（不要な内部線を省いたもの）」を取得
         List<UltimineRenderCache.LineSegment> lines = UltimineRenderCache.cachedLines;

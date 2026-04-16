@@ -2,7 +2,7 @@ package io.github.acaciatide.stapiultimine.util;
 
 public enum VeinMineMode {
     SHAPELESS("Shapeless"),
-    PLACEHOLDER("Placeholder");
+    SQUARE_3X3("3x3x1");
 
     private final String name;
 

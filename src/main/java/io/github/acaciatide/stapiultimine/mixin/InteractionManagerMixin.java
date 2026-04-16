@@ -31,7 +31,7 @@ public class InteractionManagerMixin {
                 int meta = world.getBlockMeta(x, y, z);
                 Block block = Block.BLOCKS[blockId];
                 // 実際にブロックが破壊される前に、その周囲の同種ブロックを破壊するロジックを呼び出す
-                VeinMinerUtil.mineVein(world, this.minecraft.player, x, y, z, block, meta);
+                VeinMinerUtil.mineVein(world, this.minecraft.player, x, y, z, block, meta, direction);
                 
                 // バニラのブロック破壊処理（起点ブロック）向けに座標を記憶させる
                 if (ConfigInit.CONFIG.teleportDrops) {

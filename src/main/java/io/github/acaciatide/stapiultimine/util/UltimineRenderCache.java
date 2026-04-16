@@ -2,6 +2,7 @@ package io.github.acaciatide.stapiultimine.util;
 
 import io.github.acaciatide.stapiultimine.events.init.ClientInitListener;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.hit.HitResultType;
 import net.minecraft.world.World;
@@ -67,7 +68,7 @@ public class UltimineRenderCache {
     /**
      * キャッシュの更新。ブロック群から「外側の輪郭」だけを抽出した線リストを生成する。
      */
-    public static void updateCache(World world, HitResult hit) {
+    public static void updateCache(World world, PlayerEntity player, HitResult hit) {
         if (!ClientInitListener.isUltimineKeyPressed() || hit == null || hit.type != HitResultType.BLOCK) {
             cachedLines = Collections.emptyList();
             cachedBlockCount = 0;
@@ -93,7 +94,7 @@ public class UltimineRenderCache {
         Block block = Block.BLOCKS[id];
         int meta = world.getBlockMeta(lastX, lastY, lastZ);
         // 通常の破壊と同じリストを取得する
-        Set<BlockPos> targets = VeinMinerUtil.getVeinBlocks(world, lastX, lastY, lastZ, block, meta);
+        Set<BlockPos> targets = VeinMinerUtil.getVeinBlocks(world, player, lastX, lastY, lastZ, block, meta, hit.side);
 
         if (targets.isEmpty()) {
             cachedLines = Collections.emptyList();
