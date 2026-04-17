@@ -48,4 +48,10 @@ public class StAPIUltimineConfig {
     )
     public Boolean strictToolCheck = true;
 
+    @ConfigEntry(
+        name = "Tunnel Max Blocks",
+        description = "Max length of the tunnel mode dig."
+    )
+    public Integer tunnelMaxBlocks = 16;
+
 }
