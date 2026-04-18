@@ -19,7 +19,8 @@
   "environment": "*",
   "entrypoints": {
     "stationapi:event_bus": [
-      "io.github.acaciatide.stapiultimine.events.init.InitListener"
+      "io.github.acaciatide.stapiultimine.events.init.InitListener",
+      "io.github.acaciatide.stapiultimine.events.init.PacketRegistrationListener"
     ],
     "stationapi:event_bus_client": [
       "io.github.acaciatide.stapiultimine.events.init.ClientInitListener"
