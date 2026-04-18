@@ -47,4 +47,14 @@ public abstract class AbstractMiningShape implements MiningShape {
         Block block = Block.BLOCKS[blockId];
         return block != null && player.canHarvest(block);
     }
+
+    /**
+     * プレイヤーの現在の向いている方向（水平方向）を取得します。
+     */
+    protected net.modificationstation.stationapi.api.util.math.Direction getPlayerFacing(PlayerEntity player) {
+        if (player == null) {
+            return net.modificationstation.stationapi.api.util.math.Direction.SOUTH;
+        }
+        return net.modificationstation.stationapi.api.util.math.Direction.fromRotation(player.yaw);
+    }
 }
