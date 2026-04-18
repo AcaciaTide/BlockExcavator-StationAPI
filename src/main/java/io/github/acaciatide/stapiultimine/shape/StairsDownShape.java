@@ -41,12 +41,6 @@ public class StairsDownShape extends AbstractMiningShape {
                 continue;
             }
 
-            if (!ConfigInit.CONFIG.hammerMode3x3) {
-                if (currentId != startBlock.id || currentMeta != startMeta) {
-                    continue;
-                }
-            }
-
             blocks.add(new BlockPos(bx, by, bz));
         }
 

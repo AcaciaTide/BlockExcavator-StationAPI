@@ -44,13 +44,6 @@ public class TunnelShape extends AbstractMiningShape {
                 continue;
             }
 
-            // ハンマーモードでなければ起点ブロックと同じ種類のみ掘る
-            if (!ConfigInit.CONFIG.hammerMode3x3) {
-                if (currentId != startBlock.id || currentMeta != startMeta) {
-                    continue;
-                }
-            }
-
             blocks.add(new BlockPos(bx, by, bz));
         }
 
