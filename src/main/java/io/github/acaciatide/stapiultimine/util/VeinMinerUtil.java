@@ -55,6 +55,15 @@ public class VeinMinerUtil {
     }
 
     /**
+     * テレポート関連のフラグをリセットする。
+     */
+    public static void resetTeleportStatus() {
+        isTeleportingDrops = false;
+        currentPlayer = null;
+        originBlockPos = null;
+    }
+
+    /**
      * 起点となるブロックから周囲を探索し、同種ブロックを一括破壊する。
      */
     public static void mineVein(World world, PlayerEntity player, int startX, int startY, int startZ, Block block, int meta, int face) {
@@ -99,17 +108,12 @@ public class VeinMinerUtil {
                     
                     // 適正ツールがある場合のみ、アイテムドロップや統計処理を呼び出す
                     if (currentCanHarvest && currentBlock != null) {
-                        try {
-                            if (ConfigInit.CONFIG.teleportDrops) {
-                                isTeleportingDrops = true;
-                                currentPlayer = player;
-                                currentBlock.afterBreak(world, player, (int) player.x, (int) player.y, (int) player.z, currentMeta);
-                            } else {
-                                currentBlock.afterBreak(world, player, pos.getX(), pos.getY(), pos.getZ(), currentMeta);
-                            }
-                        } finally {
-                            isTeleportingDrops = false;
-                            currentPlayer = null;
+                        if (ConfigInit.CONFIG.teleportDrops) {
+                            isTeleportingDrops = true;
+                            currentPlayer = player;
+                            currentBlock.afterBreak(world, player, (int) player.x, (int) player.y, (int) player.z, currentMeta);
+                        } else {
+                            currentBlock.afterBreak(world, player, pos.getX(), pos.getY(), pos.getZ(), currentMeta);
                         }
                     }
 

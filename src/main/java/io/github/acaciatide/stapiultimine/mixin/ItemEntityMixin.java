@@ -33,8 +33,9 @@ public class ItemEntityMixin {
             entity.velocityZ = 0.0D;
             
             // 座標をプレイヤーの正確な位置にリセットする（ランダムなズレを上書きする）
-            // 一人称視点で見えないように少しだけY座標を下げる
-            entity.setPosition(VeinMinerUtil.currentPlayer.x, VeinMinerUtil.currentPlayer.y - 0.5D, VeinMinerUtil.currentPlayer.z);
+            // プレイヤーの当たり判定の底辺（厳密な足元の床座標）を取得し、ItemEntityの沈み込みオフセット（+0.125D）を加味して床に密着させる
+            double exactGroundY = VeinMinerUtil.currentPlayer.boundingBox.minY + 0.125D;
+            entity.setPosition(VeinMinerUtil.currentPlayer.x, exactGroundY, VeinMinerUtil.currentPlayer.z);
         }
     }
 }

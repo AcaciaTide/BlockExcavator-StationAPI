@@ -6,10 +6,12 @@ import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.block.Block;
 import net.minecraft.client.InteractionManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -20,6 +22,9 @@ public class InteractionManagerMixin {
     @Shadow
     @Final
     protected Minecraft minecraft;
+
+    @Unique
+    private boolean stapiultimine_isStartingVeinMine = false;
 
     @Inject(method = "breakBlock", at = @At("HEAD"))
     public void onBreakBlock(int x, int y, int z, int direction, CallbackInfoReturnable<Boolean> cir) {
@@ -34,20 +39,30 @@ public class InteractionManagerMixin {
             if (blockId > 0) {
                 int meta = world.getBlockMeta(x, y, z);
                 Block block = Block.BLOCKS[blockId];
+                
+                // バニラのブロック破壊処理（起点ブロック）向けに情報を記憶させる
+                if (ConfigInit.CONFIG.teleportDrops) {
+                    VeinMinerUtil.originBlockPos = new BlockPos(x, y, z);
+                    VeinMinerUtil.currentPlayer = this.minecraft.player;
+                    VeinMinerUtil.isTeleportingDrops = true;
+                }
+                
+                stapiultimine_isStartingVeinMine = true;
+
                 // 実際にブロックが破壊される前に、その周囲の同種ブロックを破壊するロジックを呼び出す
                 VeinMinerUtil.mineVein(world, this.minecraft.player, x, y, z, block, meta, direction);
-                
-                // バニラのブロック破壊処理（起点ブロック）向けに座標を記憶させる
-                if (ConfigInit.CONFIG.teleportDrops) {
-                    VeinMinerUtil.originBlockPos = new net.minecraft.util.math.BlockPos(x, y, z);
-                    VeinMinerUtil.currentPlayer = this.minecraft.player;
-                }
             }
         } else {
             // 一括破壊キーが押されていない通常破壊時はリセット
-            VeinMinerUtil.originBlockPos = null;
+            VeinMinerUtil.resetTeleportStatus();
         }
     }
 
-
+    @Inject(method = "breakBlock", at = @At("RETURN"))
+    public void afterBreakBlock(int x, int y, int z, int direction, CallbackInfoReturnable<Boolean> cir) {
+        if (stapiultimine_isStartingVeinMine) {
+            stapiultimine_isStartingVeinMine = false;
+            VeinMinerUtil.resetTeleportStatus();
+        }
+    }
 }
