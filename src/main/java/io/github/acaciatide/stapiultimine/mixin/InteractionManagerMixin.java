@@ -25,6 +25,10 @@ public class InteractionManagerMixin {
     public void onBreakBlock(int x, int y, int z, int direction, CallbackInfoReturnable<Boolean> cir) {
         // キーが押されている場合のみ一括破壊を試行する
         if (ClientInitListener.isUltimineKeyPressed()) {
+            // マルチプレイ時はサーバーサイドのMixinが処理するためスキップする
+            if (this.minecraft.isWorldRemote()) return;
+
+            // シングルプレイ時は従来通りクライアント側で処理する
             World world = this.minecraft.world;
             int blockId = world.getBlockId(x, y, z);
             if (blockId > 0) {

@@ -1,10 +1,12 @@
 package io.github.acaciatide.stapiultimine.mixin;
 
 import io.github.acaciatide.stapiultimine.events.init.ClientInitListener;
+import io.github.acaciatide.stapiultimine.network.ModeSwitchPacket;
 import io.github.acaciatide.stapiultimine.util.VeinMinerUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
+import net.modificationstation.stationapi.api.network.packet.PacketHelper;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,7 +29,12 @@ public class PlayerInventoryMixin {
                 // モードを循環させる（上スクロールなら次へ、下スクロールなら前へ）
                 // directionは正負が逆転している可能性があるため、そのまま渡してcycleMode側でハンドルする
                 VeinMinerUtil.cycleMode(direction);
-                
+
+                // マルチプレイ時はサーバーにもモード変更を通知する
+                if (minecraft.isWorldRemote()) {
+                    PacketHelper.send(new ModeSwitchPacket(VeinMinerUtil.currentMode.ordinal()));
+                }
+
                 // バニラのホットバースロット切り替えを防止する
                 ci.cancel();
             }
