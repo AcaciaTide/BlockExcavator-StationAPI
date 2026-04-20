@@ -89,7 +89,7 @@ public class VeinMinerUtil {
                 // ブロックがまだ存在し、モードごとの条件に合致しているか再確認
                 boolean shouldBreak = false;
                 if (currentMode == VeinMineMode.SQUARE_3X3 && ConfigInit.CONFIG.hammerMode3x3) {
-                    if (currentId > 0 && currentId != 7 && currentId != 8 && currentId != 9 && currentId != 10 && currentId != 11 && currentId != 51 && currentId != 90) {
+                    if (!io.github.acaciatide.stapiultimine.shape.AbstractMiningShape.isInvalidBlock(currentId)) {
                         shouldBreak = true;
                     }
                 } else {

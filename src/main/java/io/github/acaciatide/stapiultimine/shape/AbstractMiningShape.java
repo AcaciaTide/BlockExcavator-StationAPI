@@ -10,7 +10,7 @@ public abstract class AbstractMiningShape implements MiningShape {
     /**
      * 空気、岩盤、液体などの「採掘不可能」なブロックであるかを判定します。
      */
-    protected boolean isInvalidBlock(int blockId) {
+    public static boolean isInvalidBlock(int blockId) {
         if (blockId <= 0) return true; // 空気や未定義
 
         Block block = Block.BLOCKS[blockId];
