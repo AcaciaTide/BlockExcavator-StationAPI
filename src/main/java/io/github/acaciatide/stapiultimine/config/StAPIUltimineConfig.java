@@ -54,4 +54,20 @@ public class StAPIUltimineConfig {
     )
     public Integer tunnelMaxBlocks = 16;
 
+    @ConfigEntry(
+        name = "HUD Offset X",
+        description = "Horizontal offset for the on-screen status display.",
+        maxValue = 9999,
+        minValue = 0
+    )
+    public Integer hudOffsetX = 0;
+
+    @ConfigEntry(
+        name = "HUD Offset Y",
+        description = "Vertical offset for the on-screen status display.",
+        maxValue = 9999,
+        minValue = 0
+    )
+    public Integer hudOffsetY = 0;
+
 }

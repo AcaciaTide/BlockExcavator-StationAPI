@@ -21,19 +21,25 @@ public class InGameHudMixin {
     @Inject(method = "render(FZII)V", at = @At("TAIL"))
     private void renderHUD(float tickDelta, boolean screenOpen, int mouseX, int mouseY, CallbackInfo ci) {
         if (ClientInitListener.isUltimineKeyPressed() && ConfigInit.CONFIG.displayHudStatus) {
+            int offsetX = (ConfigInit.CONFIG.hudOffsetX != null) ? ConfigInit.CONFIG.hudOffsetX : 0;
+            int offsetY = (ConfigInit.CONFIG.hudOffsetY != null) ? ConfigInit.CONFIG.hudOffsetY : 0;
+            
+            int baseX = 5 + offsetX;
+            int baseY = 15 + offsetY;
+
             if (UltimineRenderCache.cachedBlockCount > 0) {
                 // 有効時: 白色でステータスとモードを表示
-                this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Enabled", 5, 15, 0xFFFFFF);
-                this.minecraft.textRenderer.drawWithShadow("Mode: " + VeinMinerUtil.currentMode.getName() + " (" + UltimineRenderCache.cachedBlockCount + ")", 5, 25, 0xFFFFFF);
+                this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Enabled", baseX, baseY, 0xFFFFFF);
+                this.minecraft.textRenderer.drawWithShadow("Mode: " + VeinMinerUtil.currentMode.getName() + " (" + UltimineRenderCache.cachedBlockCount + ")", baseX, baseY + 10, 0xFFFFFF);
             } else {
                 // 無効時: 灰色でDisabledのみ表示
-                this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Disabled", 5, 15, 0xAAAAAA);
+                this.minecraft.textRenderer.drawWithShadow("StAPIUltimine: Disabled", baseX, baseY, 0xAAAAAA);
             }
             
             // スニーク（シフト等）を押している時にだけ操作案内を追加表示
             if (this.minecraft.options != null && org.lwjgl.input.Keyboard.isKeyDown(this.minecraft.options.sneakKey.code)) {
-                this.minecraft.textRenderer.drawWithShadow("Mouse wheel up: " + VeinMinerUtil.getNextModeName(), 5, 35, 0xFFFFAA);
-                this.minecraft.textRenderer.drawWithShadow("Mouse wheel down: " + VeinMinerUtil.getPrevModeName(), 5, 45, 0xFFFFAA);
+                this.minecraft.textRenderer.drawWithShadow("Mouse wheel up: " + VeinMinerUtil.getNextModeName(), baseX, baseY + 20, 0xFFFFAA);
+                this.minecraft.textRenderer.drawWithShadow("Mouse wheel down: " + VeinMinerUtil.getPrevModeName(), baseX, baseY + 30, 0xFFFFAA);
             }
         }
     }
