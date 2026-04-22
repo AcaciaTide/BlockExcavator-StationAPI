@@ -47,7 +47,7 @@ public class Square3x3Shape extends AbstractMiningShape {
                     continue;
                 }
 
-                if (ConfigInit.CONFIG.hammerMode3x3) {
+                if (ConfigInit.GENERAL.hammerMode3x3) {
                     // ハンマーモード：壊せるブロックなら何でも追加
                     blocks.add(new BlockPos(bx, by, bz));
                 } else {

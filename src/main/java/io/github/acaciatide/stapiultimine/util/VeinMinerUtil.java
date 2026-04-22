@@ -72,7 +72,7 @@ public class VeinMinerUtil {
         // ツールの適正チェック
         boolean canHarvest = player.canHarvest(block);
         // 無条件破壊がオフ かつ 適正ツールでない場合は一括破壊を中止する
-        if (!ConfigInit.CONFIG.forceVeinMine && !canHarvest) return;
+        if (!ConfigInit.ADVANCED.forceVeinMine && !canHarvest) return;
         if (block == null) return;
         isMining = true;
 
@@ -88,7 +88,7 @@ public class VeinMinerUtil {
 
                 // ブロックがまだ存在し、モードごとの条件に合致しているか再確認
                 boolean shouldBreak = false;
-                if (currentMode == VeinMineMode.SQUARE_3X3 && ConfigInit.CONFIG.hammerMode3x3) {
+                if (currentMode == VeinMineMode.SQUARE_3X3 && ConfigInit.GENERAL.hammerMode3x3) {
                     if (!io.github.acaciatide.stapiultimine.shape.AbstractMiningShape.isInvalidBlock(currentId)) {
                         shouldBreak = true;
                     }
@@ -108,7 +108,7 @@ public class VeinMinerUtil {
                     
                     // 適正ツールがある場合のみ、アイテムドロップや統計処理を呼び出す
                     if (currentCanHarvest && currentBlock != null) {
-                        if (ConfigInit.CONFIG.teleportDrops) {
+                        if (ConfigInit.ADVANCED.teleportDrops) {
                             isTeleportingDrops = true;
                             currentPlayer = player;
                             currentBlock.afterBreak(world, player, (int) player.x, (int) player.y, (int) player.z, currentMeta);
@@ -118,7 +118,7 @@ public class VeinMinerUtil {
                     }
 
                     // 手持ちアイテム（ツール）の耐久値消費
-                    if (ConfigInit.CONFIG.consumeDurability) {
+                    if (ConfigInit.GENERAL.consumeDurability) {
                         ItemStack heldItem = player.getHand();
                         if (heldItem != null && heldItem.isDamageable()) {
                             heldItem.damage(1, player);

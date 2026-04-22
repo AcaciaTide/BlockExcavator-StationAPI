@@ -31,12 +31,12 @@ public abstract class AbstractMiningShape implements MiningShape {
      */
     protected boolean canHarvest(PlayerEntity player, int blockId) {
         // 無条件破壊(forceVeinMine)がONの時はチェックをスキップ
-        if (ConfigInit.CONFIG.forceVeinMine) {
+        if (ConfigInit.ADVANCED.forceVeinMine) {
             return true;
         }
 
         // Strict Tool Check がOFFの時はチェックをスキップ
-        if (!ConfigInit.CONFIG.strictToolCheck) {
+        if (!ConfigInit.ADVANCED.strictToolCheck) {
             return true;
         }
 

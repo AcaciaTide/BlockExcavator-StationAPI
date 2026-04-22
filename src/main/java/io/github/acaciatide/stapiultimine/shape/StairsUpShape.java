@@ -18,7 +18,7 @@ public class StairsUpShape extends AbstractMiningShape {
         // プレイヤーの向いている方向（前）を取得
         Direction dir = getPlayerFacing(player);
         
-        int maxLength = Math.max(1, ConfigInit.CONFIG.tunnelMaxBlocks);
+        int maxLength = Math.max(1, ConfigInit.GENERAL.tunnelMaxBlocks);
 
         for (int i = 0; i < maxLength; i++) {
             // 前に1ブロック、上に1ブロックずつ進む

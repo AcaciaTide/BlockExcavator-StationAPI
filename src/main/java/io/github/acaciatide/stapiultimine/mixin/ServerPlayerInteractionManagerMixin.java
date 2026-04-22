@@ -78,7 +78,7 @@ public class ServerPlayerInteractionManagerMixin {
 
         if (removed) {
             // ドロップを生成する（teleportDropsフラグはItemEntityMixin側で参照される）
-            if (ConfigInit.CONFIG.teleportDrops) {
+            if (ConfigInit.ADVANCED.teleportDrops) {
                 // シングルプレイと同じくプレイヤーの足元に直接生成することで、テレポートの同期ズレを解消する
                 block.afterBreak(this.world, this.player, (int) Math.floor(this.player.x), (int) Math.floor(this.player.y), (int) Math.floor(this.player.z), meta);
             } else {
@@ -87,7 +87,7 @@ public class ServerPlayerInteractionManagerMixin {
         }
 
         // consumeDurability 設定に従ってツール耐久消費を制御する
-        if (ConfigInit.CONFIG.consumeDurability) {
+        if (ConfigInit.GENERAL.consumeDurability) {
             ItemStack held = this.player.getHand();
             if (held != null) {
                 held.postMine(blockId, x, y, z, this.player);
@@ -122,7 +122,7 @@ public class ServerPlayerInteractionManagerMixin {
         int meta = this.world.getBlockMeta(x, y, z);
 
         // ツール適正チェック（forceVeinMine=falseかつ非適正ツールなら中止する）
-        if (!ConfigInit.CONFIG.forceVeinMine && !this.player.canHarvest(block)) return;
+        if (!ConfigInit.ADVANCED.forceVeinMine && !this.player.canHarvest(block)) return;
 
         // プレイヤーごとに管理されているモードを取得する（クライアントのstatic変数は参照しない）
         VeinMineMode mode = PlayerStateManager.getMode(this.player);
@@ -136,7 +136,7 @@ public class ServerPlayerInteractionManagerMixin {
         stapiultimine_isStartingVeinMine = true;
 
         // teleportDrops が有効な場合は ItemEntityMixin が参照するフラグを立てる
-        if (ConfigInit.CONFIG.teleportDrops) {
+        if (ConfigInit.ADVANCED.teleportDrops) {
             VeinMinerUtil.isTeleportingDrops = true;
             VeinMinerUtil.currentPlayer = this.player;
             VeinMinerUtil.originBlockPos = new BlockPos(x, y, z);
@@ -147,7 +147,7 @@ public class ServerPlayerInteractionManagerMixin {
 
             for (BlockPos pos : targets) {
                 // 設定の上限に達したら中断する（形状側でも制限されているが安全のため二重チェックする）
-                if (count >= ConfigInit.CONFIG.maxBlocks) break;
+                if (count >= ConfigInit.GENERAL.maxBlocks) break;
 
                 // 起点ブロックはバニラの tryBreakBlock がそのまま処理するためスキップする
                 if (pos.getX() == x && pos.getY() == y && pos.getZ() == z) continue;

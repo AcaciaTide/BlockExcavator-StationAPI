@@ -16,7 +16,7 @@ public class ShapelessShape extends AbstractMiningShape {
     @Override
     public Set<BlockPos> getBlocks(World world, PlayerEntity player, int startX, int startY, int startZ, Block startBlock, int startMeta, int face) {
         Set<BlockPos> blocks = new HashSet<>();
-        int maxBlocks = Math.max(1, Math.min(256, ConfigInit.CONFIG.maxBlocks));
+        int maxBlocks = Math.max(1, Math.min(256, ConfigInit.GENERAL.maxBlocks));
         
         Queue<BlockPos> queue = new LinkedList<>();
         Set<BlockPos> visited = new HashSet<>();

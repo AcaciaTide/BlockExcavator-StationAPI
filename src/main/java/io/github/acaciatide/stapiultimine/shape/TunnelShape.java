@@ -18,7 +18,7 @@ public class TunnelShape extends AbstractMiningShape {
         // 叩いた面の「反対側」を掘る方向として決定する
         Direction dir = Direction.byId(face).getOpposite();
         
-        int maxLength = Math.max(1, ConfigInit.CONFIG.tunnelMaxBlocks);
+        int maxLength = Math.max(1, ConfigInit.GENERAL.tunnelMaxBlocks);
 
         for (int i = 0; i < maxLength; i++) {
             int bx = startX + (dir.getOffsetX() * i);

@@ -30,7 +30,7 @@ public class InteractionManagerMixin {
     public void onBreakBlock(int x, int y, int z, int direction, CallbackInfoReturnable<Boolean> cir) {
         // 次回の破壊検知時に、以前の残骸（起点ブロックの記憶）を完全にリセットする
         VeinMinerUtil.originBlockPos = null;
-        if (!ConfigInit.CONFIG.teleportDrops) {
+        if (!ConfigInit.ADVANCED.teleportDrops) {
             VeinMinerUtil.currentPlayer = null;
         }
 
@@ -47,7 +47,7 @@ public class InteractionManagerMixin {
                 Block block = Block.BLOCKS[blockId];
                 
                 // バニラのブロック破壊処理（起点ブロック）向けに情報を記憶させる
-                if (ConfigInit.CONFIG.teleportDrops) {
+                if (ConfigInit.ADVANCED.teleportDrops) {
                     VeinMinerUtil.originBlockPos = new BlockPos(x, y, z);
                     VeinMinerUtil.currentPlayer = this.minecraft.player;
                     VeinMinerUtil.isTeleportingDrops = true;
