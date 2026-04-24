@@ -6,48 +6,48 @@ public class StAPIUltimineConfig {
 
     public static class GeneralConfig {
         @ConfigEntry(
-            name = "Max Blocks",
-            description = "Maximum number of blocks to mine at once.",
+            name = "Max Blocks to Mine",
+            description = "Maximum number of blocks that can be mined in a single vein mine operation.",
             maxValue = 256,
             minValue = 1
         )
         public Integer maxBlocks = 64;
 
         @ConfigEntry(
-            name = "Tunnel Max Blocks",
-            description = "Max length of the tunnel mode dig."
+            name = "Tunnel/Stairs Mode: Dig Depth",
+            description = "The maximum depth (distance forward) the Tunnel/Stairs mode will dig."
         )
         public Integer tunnelMaxBlocks = 16;
 
         @ConfigEntry(
-            name = "3x3 Hammer Mode",
-            description = "If true, the 3x3 mode mines any breakable blocks. If false, it only mines identical blocks."
+            name = "3x3 Mode: Ignore Block Type",
+            description = "If enabled, 3x3 mode will break any mineable blocks in its area. If disabled, it only breaks blocks identical to the one you clicked."
         )
         public Boolean hammerMode3x3 = false;
 
         @ConfigEntry(
-            name = "Consume Durability",
-            description = "Deduct durability for every block mined in the chain."
+            name = "Consume Tool Durability",
+            description = "If enabled, your tool will lose durability for every block mined. If disabled, durability is only consumed for the first block."
         )
         public Boolean consumeDurability = true;
 
         @ConfigEntry(
-            name = "Display HUD Status",
-            description = "Show the vein miner status on the screen."
+            name = "Show On-Screen Status",
+            description = "Displays the current vein mine mode and block count on your screen when holding the hotkey."
         )
         public Boolean displayHudStatus = true;
 
         @ConfigEntry(
-            name = "HUD Offset X",
-            description = "Horizontal offset for the on-screen status display.",
+            name = "HUD X Position Offset",
+            description = "Moves the on-screen status text left or right. Useful if it overlaps with other mods.",
             maxValue = 9999,
             minValue = 0
         )
         public Integer hudOffsetX = 0;
 
         @ConfigEntry(
-            name = "HUD Offset Y",
-            description = "Vertical offset for the on-screen status display.",
+            name = "HUD Y Position Offset",
+            description = "Moves the on-screen status text up or down. Useful if it overlaps with other mods.",
             maxValue = 9999,
             minValue = 0
         )
@@ -56,20 +56,20 @@ public class StAPIUltimineConfig {
 
     public static class AdvancedConfig {
         @ConfigEntry(
-            name = "Teleport Drops",
-            description = "Teleport mined item drops directly to the player."
+            name = "Teleport Item Drops",
+            description = "Automatically teleports all mined items directly to your feet."
         )
         public Boolean teleportDrops = false;
 
         @ConfigEntry(
-            name = "Unconditional Mining",
-            description = "Allow vein mining without effective tools (no drops)."
+            name = "Allow Mining Without Correct Tool",
+            description = "If enabled, allows vein mining even if you don't have the correct tool. WARNING: Blocks mined without the correct tool will drop nothing!"
         )
         public Boolean forceVeinMine = true;
 
         @ConfigEntry(
-            name = "Strict Tool Check",
-            description = "Only mine blocks that can be harvested with the current tool."
+            name = "Strict Tool Check for Connected Blocks",
+            description = "If enabled, the vein mine will NOT spread to blocks your tool cannot harvest. If disabled, it breaks them anyway (dropping nothing)."
         )
         public Boolean strictToolCheck = true;
     }
