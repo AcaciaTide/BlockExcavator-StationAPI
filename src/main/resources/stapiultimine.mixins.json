@@ -7,14 +7,14 @@
     "ItemEntityMixin"
   ],
   "client": [
-    "ExampleMixin",
     "InteractionManagerMixin",
     "WorldRendererMixin",
     "InGameHudMixin",
     "PlayerInventoryMixin"
   ],
   "server": [
-    "ServerPlayerInteractionManagerMixin"
+    "ServerPlayerInteractionManagerMixin",
+    "ServerPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
