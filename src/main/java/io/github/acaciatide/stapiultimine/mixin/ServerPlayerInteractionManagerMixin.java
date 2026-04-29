@@ -63,11 +63,11 @@ public class ServerPlayerInteractionManagerMixin {
      * - teleportDrops は呼び出し元ループ側でフラグ制御するため、ここでは afterBreak() を呼ぶのみ
      */
     @Unique
-    private void stapiultimine_breakBlock(int x, int y, int z) {
+    private boolean stapiultimine_breakBlock(int x, int y, int z) {
         int blockId = this.world.getBlockId(x, y, z);
-        if (blockId <= 0) return;
+        if (blockId <= 0) return false;
         Block block = Block.BLOCKS[blockId];
-        if (block == null) return;
+        if (block == null) return false;
         int meta = this.world.getBlockMeta(x, y, z);
 
         // 破壊パーティクルと効果音をクライアントに送信する
@@ -94,9 +94,11 @@ public class ServerPlayerInteractionManagerMixin {
                 if (held.count <= 0) {
                     held.onRemoved(this.player);
                     this.player.clearStackInHand();
+                    return true; // ツールが壊れたので追加破壊を中断する
                 }
             }
         }
+        return false;
     }
 
     // プレイヤーが叩いたブロックの面方向（direction）を記録しておく
@@ -152,11 +154,10 @@ public class ServerPlayerInteractionManagerMixin {
                 // 起点ブロックはバニラの tryBreakBlock がそのまま処理するためスキップする
                 if (pos.getX() == x && pos.getY() == y && pos.getZ() == z) continue;
 
-                stapiultimine_breakBlock(pos.getX(), pos.getY(), pos.getZ());
+                if (stapiultimine_breakBlock(pos.getX(), pos.getY(), pos.getZ())) {
+                    break;
+                }
                 count++;
-
-                // ツールが破壊されたら追加破壊を中断する
-                if (this.player.getHand() == null) break;
             }
         } catch (Exception e) {
             // 例外が発生した場合はここでフラグをリセットし、上位に投げる
