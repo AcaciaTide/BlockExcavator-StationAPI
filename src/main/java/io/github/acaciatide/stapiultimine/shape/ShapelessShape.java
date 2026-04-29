@@ -15,11 +15,11 @@ import java.util.Set;
 public class ShapelessShape extends AbstractMiningShape {
     @Override
     public Set<BlockPos> getBlocks(World world, PlayerEntity player, int startX, int startY, int startZ, Block startBlock, int startMeta, int face) {
-        Set<BlockPos> blocks = new HashSet<>();
-        int maxBlocks = Math.max(1, Math.min(256, ConfigInit.GENERAL.maxBlocks));
+        int maxBlocksVal = Math.max(1, Math.min(256, ConfigInit.GENERAL.maxBlocks));
+        Set<BlockPos> blocks = new HashSet<>(maxBlocksVal * 2);
         
         Queue<BlockPos> queue = new LinkedList<>();
-        Set<BlockPos> visited = new HashSet<>();
+        Set<BlockPos> visited = new HashSet<>(maxBlocksVal * 4);
         MutableBlockPos mutablePos = new MutableBlockPos();
 
         BlockPos start = new BlockPos(startX, startY, startZ);
@@ -27,7 +27,7 @@ public class ShapelessShape extends AbstractMiningShape {
         blocks.add(start);
         addNeighbors(queue, visited, startX, startY, startZ, mutablePos);
 
-        while (!queue.isEmpty() && blocks.size() < maxBlocks) {
+        while (!queue.isEmpty() && blocks.size() < maxBlocksVal) {
             BlockPos pos = queue.poll();
 
             int currentId = world.getBlockId(pos.getX(), pos.getY(), pos.getZ());

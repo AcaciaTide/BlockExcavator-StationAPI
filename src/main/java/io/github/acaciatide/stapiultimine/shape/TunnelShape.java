@@ -30,12 +30,9 @@ public class TunnelShape extends AbstractMiningShape {
 
             // 有効ブロックチェック (岩盤やポータルなどをスキップ)
             if (isInvalidBlock(currentId)) {
-                // 岩盤やポータルなど「破壊不能」なブロックにぶつかったらそこでトンネル探索を停止
-                Block currentBlock = currentId > 0 ? Block.BLOCKS[currentId] : null;
-                if (currentBlock != null && currentBlock.getHardness() < 0.0F) {
+                if (shouldStopOnInvalidBlock(currentId)) {
                     break;
                 }
-                // 空気や液体などの場合はスキップして奥の探索を継続
                 continue;
             }
 

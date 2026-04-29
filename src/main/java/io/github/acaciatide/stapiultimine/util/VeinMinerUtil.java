@@ -86,19 +86,8 @@ public class VeinMinerUtil {
                 int currentId = world.getBlockId(pos.getX(), pos.getY(), pos.getZ());
                 int currentMeta = world.getBlockMeta(pos.getX(), pos.getY(), pos.getZ());
 
-                // ブロックがまだ存在し、モードごとの条件に合致しているか再確認
-                boolean shouldBreak = false;
-                if (currentMode == VeinMineMode.SQUARE_3X3 && ConfigInit.GENERAL.hammerMode3x3) {
-                    if (!io.github.acaciatide.stapiultimine.shape.AbstractMiningShape.isInvalidBlock(currentId)) {
-                        shouldBreak = true;
-                    }
-                } else {
-                    if (currentId == block.id && currentMeta == meta) {
-                        shouldBreak = true;
-                    }
-                }
-
-                if (shouldBreak) {
+                // ブロックがまだ存在するかのみをチェック（詳細な条件はgetVeinBlocksで検証済み）
+                if (currentId > 0) {
                     Block currentBlock = Block.BLOCKS[currentId];
                     // ブロックを空気(0)に置換
                     world.setBlock(pos.getX(), pos.getY(), pos.getZ(), 0);

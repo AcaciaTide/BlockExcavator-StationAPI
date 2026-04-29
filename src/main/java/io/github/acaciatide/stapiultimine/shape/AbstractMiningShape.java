@@ -26,6 +26,15 @@ public abstract class AbstractMiningShape implements MiningShape {
     }
 
     /**
+     * 岩盤やポータルなど「破壊不能」な無効ブロックであるかを判定し、探索を停止すべきか返します。
+     */
+    protected boolean shouldStopOnInvalidBlock(int blockId) {
+        if (blockId <= 0) return false;
+        Block block = Block.BLOCKS[blockId];
+        return block != null && block.getHardness() < 0.0F;
+    }
+
+    /**
      * プレイヤーがそのブロックを破壊可能か（ツール適正があるか）を判定します。
      * 設定によってスキップされる場合があります。
      */

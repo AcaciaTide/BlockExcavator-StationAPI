@@ -30,11 +30,10 @@ public class StairsDownShape extends AbstractMiningShape {
             int currentMeta = world.getBlockMeta(bx, by, bz);
 
             if (isInvalidBlock(currentId)) {
-                Block currentBlock = currentId > 0 ? Block.BLOCKS[currentId] : null;
-                if (currentBlock != null && currentBlock.getHardness() < 0.0F) {
-                    break; // 岩盤などにぶつかったら停止
+                if (shouldStopOnInvalidBlock(currentId)) {
+                    break;
                 }
-                continue; // 空気や液体はスキップ
+                continue;
             }
 
             if (!canHarvest(player, currentId)) {
