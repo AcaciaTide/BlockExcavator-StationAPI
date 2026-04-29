@@ -43,7 +43,11 @@ public class UltimineRenderCache {
 
         @Override
         public int hashCode() {
-            return Objects.hash(axis, x, y, z);
+            int result = axis;
+            result = 31 * result + x;
+            result = 31 * result + y;
+            result = 31 * result + z;
+            return result;
         }
     }
 
@@ -105,7 +109,8 @@ public class UltimineRenderCache {
         cachedBlockCount = targets.size();
 
         // 輪郭メッシュ抽出ロジック
-        Map<Edge, Set<Direction>> edgeNormals = new HashMap<>();
+        int estimatedEdges = targets.size() * 12;
+        Map<Edge, Set<Direction>> edgeNormals = new HashMap<>(estimatedEdges);
         MutableBlockPos searchPos = new MutableBlockPos();
 
         for (BlockPos pos : targets) {
@@ -156,7 +161,7 @@ public class UltimineRenderCache {
         }
 
         // 余分な内側の線をフィルタリング
-        List<LineSegment> result = new ArrayList<>();
+        List<LineSegment> result = new ArrayList<>(estimatedEdges / 2);
         
         for (Map.Entry<Edge, Set<Direction>> entry : edgeNormals.entrySet()) {
             // 一番外側の「角・コーナー」であれば、異なる向きの露出面が交わるので方向(法線)が2つ以上になる。
