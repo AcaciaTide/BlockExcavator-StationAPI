@@ -4,13 +4,12 @@
   "version": "${version}",
 
   "name": "StAPI Ultimine",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "A vein mining mod for Minecraft Beta 1.7.3 with multiple mining modes.",
   "authors": [
     "AcaciaTide"
   ],
   "contact": {
-    "homepage": "https://glass-launcher.net/",
-    "sources": "https://github.com/calmilamsy/stationapi-example-mod"
+    "sources": "https://github.com/acaciatide/stapi-ultimine"
   },
 
   "license": "MIT",
@@ -24,8 +23,6 @@
     ],
     "stationapi:event_bus_client": [
       "io.github.acaciatide.stapiultimine.events.init.ClientInitListener"
-    ],
-    "stationapi:event_bus_server": [
     ],
     "gcapi3": [
       "io.github.acaciatide.stapiultimine.config.ConfigInit"
