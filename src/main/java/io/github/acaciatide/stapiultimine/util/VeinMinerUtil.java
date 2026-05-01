@@ -97,20 +97,20 @@ public class VeinMinerUtil {
                     
                     // 適正ツールがある場合のみ、アイテムドロップや統計処理を呼び出す
                     if (currentCanHarvest && currentBlock != null) {
+                        // teleportDropsがONの場合はフラグを立てておき、ItemEntityMixinにフックさせる
                         if (ConfigInit.ADVANCED.teleportDrops) {
                             isTeleportingDrops = true;
                             currentPlayer = player;
-                            currentBlock.afterBreak(world, player, (int) player.x, (int) player.y, (int) player.z, currentMeta);
-                        } else {
-                            currentBlock.afterBreak(world, player, pos.getX(), pos.getY(), pos.getZ(), currentMeta);
                         }
+                        // 常に実際のブロックの座標を渡す（爆発などの他Modのギミックが正しく動くようにするため）
+                        currentBlock.afterBreak(world, player, pos.getX(), pos.getY(), pos.getZ(), currentMeta);
                     }
 
                     // 手持ちアイテム（ツール）の耐久値消費
                     if (ConfigInit.GENERAL.consumeDurability) {
                         ItemStack heldItem = player.getHand();
-                        if (heldItem != null && heldItem.isDamageable()) {
-                            heldItem.damage(1, player);
+                        if (heldItem != null) {
+                            heldItem.postMine(currentId, pos.getX(), pos.getY(), pos.getZ(), player);
                             if (heldItem.count <= 0) {
                                 heldItem.onRemoved(player);
                                 player.clearStackInHand();

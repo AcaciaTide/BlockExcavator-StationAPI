@@ -77,13 +77,8 @@ public class ServerPlayerInteractionManagerMixin {
         boolean removed = this.finishMining(x, y, z);
 
         if (removed) {
-            // ドロップを生成する（teleportDropsフラグはItemEntityMixin側で参照される）
-            if (ConfigInit.ADVANCED.teleportDrops) {
-                // シングルプレイと同じくプレイヤーの足元に直接生成することで、テレポートの同期ズレを解消する
-                block.afterBreak(this.world, this.player, (int) Math.floor(this.player.x), (int) Math.floor(this.player.y), (int) Math.floor(this.player.z), meta);
-            } else {
-                block.afterBreak(this.world, this.player, x, y, z, meta);
-            }
+            // ドロップを生成する（ItemEntityMixin側でアイテムのテレポート処理が行われるため実際の座標を渡す）
+            block.afterBreak(this.world, this.player, x, y, z, meta);
         }
 
         // consumeDurability 設定に従ってツール耐久消費を制御する
