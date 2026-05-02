@@ -3,7 +3,6 @@ package io.github.acaciatide.stapiultimine.shape;
 import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
 
 public abstract class AbstractMiningShape implements MiningShape {
 

@@ -1,16 +1,12 @@
 package io.github.acaciatide.stapiultimine.util;
 
+import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import net.minecraft.util.math.BlockPos;
-import net.modificationstation.stationapi.api.util.math.MutableBlockPos;
+import net.minecraft.world.World;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 
 public class VeinMinerUtil {

@@ -2,8 +2,8 @@ package io.github.acaciatide.stapiultimine.shape;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.Set;
 

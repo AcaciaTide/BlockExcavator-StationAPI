@@ -5,12 +5,12 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.hit.HitResultType;
-import net.minecraft.world.World;
-
-import java.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.modificationstation.stationapi.api.util.math.Direction;
 import net.modificationstation.stationapi.api.util.math.MutableBlockPos;
+
+import java.util.*;
 
 public class UltimineRenderCache {
 

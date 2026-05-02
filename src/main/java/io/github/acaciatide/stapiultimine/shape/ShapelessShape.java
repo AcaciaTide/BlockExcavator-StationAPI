@@ -3,8 +3,8 @@ package io.github.acaciatide.stapiultimine.shape;
 import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.modificationstation.stationapi.api.util.math.MutableBlockPos;
 
 import java.util.HashSet;

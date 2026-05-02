@@ -1,11 +1,6 @@
 package io.github.acaciatide.stapiultimine.util;
 
-import io.github.acaciatide.stapiultimine.shape.MiningShape;
-import io.github.acaciatide.stapiultimine.shape.ShapelessShape;
-import io.github.acaciatide.stapiultimine.shape.Square3x3Shape;
-import io.github.acaciatide.stapiultimine.shape.TunnelShape;
-import io.github.acaciatide.stapiultimine.shape.StairsUpShape;
-import io.github.acaciatide.stapiultimine.shape.StairsDownShape;
+import io.github.acaciatide.stapiultimine.shape.*;
 
 public enum VeinMineMode {
     SHAPELESS("Shapeless", new ShapelessShape()),

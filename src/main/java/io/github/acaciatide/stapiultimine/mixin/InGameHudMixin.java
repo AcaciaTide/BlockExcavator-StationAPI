@@ -1,9 +1,9 @@
 package io.github.acaciatide.stapiultimine.mixin;
 
+import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import io.github.acaciatide.stapiultimine.events.init.ClientInitListener;
 import io.github.acaciatide.stapiultimine.util.UltimineRenderCache;
 import io.github.acaciatide.stapiultimine.util.VeinMinerUtil;
-import io.github.acaciatide.stapiultimine.config.ConfigInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.hud.InGameHud;
 import org.spongepowered.asm.mixin.Mixin;
