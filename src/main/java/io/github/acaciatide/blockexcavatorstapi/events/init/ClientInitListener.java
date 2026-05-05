@@ -17,8 +17,8 @@ public class ClientInitListener {
 
     @EventListener
     public void registerKeyBindings(KeyBindingRegisterEvent event) {
-        // キーバインドの登録 ('V'キーをデフォルトに設定)
-        excavatorKey = new KeyBinding("key.blockexcavatorstapi.excavator", Keyboard.KEY_V);
+        // キーバインドの登録 ('LeftCTRL'キーをデフォルトに設定)
+        excavatorKey = new KeyBinding("key.blockexcavatorstapi.excavator", Keyboard.KEY_LCONTROL       );
         event.keyBindings.add(excavatorKey);
     }
     
