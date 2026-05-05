@@ -7,7 +7,7 @@ public class BlockExcavatorConfig {
     public static class GeneralConfig {
         @ConfigEntry(
             name = "Max Blocks to Mine",
-            description = "Maximum number of blocks that can be mined in a single vein mine operation.",
+            description = "Maximum number of blocks that can be mined in a single vein mine operation. Max=256,Min=1",
             maxValue = 256,
             minValue = 1
         )
@@ -15,7 +15,7 @@ public class BlockExcavatorConfig {
 
         @ConfigEntry(
             name = "Tunnel/Stairs Mode: Dig Depth",
-            description = "The maximum depth (distance forward) the Tunnel/Stairs mode will dig.",
+            description = "The maximum depth (distance forward) the Tunnel/Stairs mode will dig. Max=256,Min=1",
             maxValue = 256,
             minValue = 1
         )
