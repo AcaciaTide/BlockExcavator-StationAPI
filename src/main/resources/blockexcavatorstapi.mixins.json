@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.acaciatide.blockexcavatorstapi.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ItemEntityMixin"
+  ],
+  "client": [
+    "InteractionManagerMixin",
+    "WorldRendererMixin",
+    "InGameHudMixin",
+    "PlayerInventoryMixin"
+  ],
+  "server": [
+    "ServerPlayerInteractionManagerMixin",
+    "ServerPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

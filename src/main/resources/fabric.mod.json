@@ -1,35 +1,35 @@
 {
   "schemaVersion": 1,
-  "id": "stapiultimine",
+  "id": "blockexcavatorstapi",
   "version": "${version}",
 
-  "name": "StAPI Ultimine",
+  "name": "Block Excavator StationAPI",
   "description": "A vein mining mod for Minecraft Beta 1.7.3 with multiple mining modes.",
   "authors": [
     "AcaciaTide"
   ],
   "contact": {
-    "sources": "https://github.com/acaciatide/stapi-ultimine"
+    "sources": "https://github.com/acaciatide/stapi-excavator"
   },
 
   "license": "MIT",
-  "icon": "assets/stapiultimine/icon.png",
+  "icon": "assets/blockexcavatorstapi/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "stationapi:event_bus": [
-      "io.github.acaciatide.stapiultimine.events.init.InitListener",
-      "io.github.acaciatide.stapiultimine.events.init.PacketRegistrationListener"
+      "io.github.acaciatide.blockexcavatorstapi.events.init.InitListener",
+      "io.github.acaciatide.blockexcavatorstapi.events.init.PacketRegistrationListener"
     ],
     "stationapi:event_bus_client": [
-      "io.github.acaciatide.stapiultimine.events.init.ClientInitListener"
+      "io.github.acaciatide.blockexcavatorstapi.events.init.ClientInitListener"
     ],
     "gcapi3": [
-      "io.github.acaciatide.stapiultimine.config.ConfigInit"
+      "io.github.acaciatide.blockexcavatorstapi.config.ConfigInit"
     ]
   },
   "mixins": [
-    "stapiultimine.mixins.json"
+    "blockexcavatorstapi.mixins.json"
   ],
 
   "depends": {
