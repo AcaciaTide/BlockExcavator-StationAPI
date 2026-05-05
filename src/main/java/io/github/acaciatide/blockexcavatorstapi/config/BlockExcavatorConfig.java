@@ -15,7 +15,9 @@ public class BlockExcavatorConfig {
 
         @ConfigEntry(
             name = "Tunnel/Stairs Mode: Dig Depth",
-            description = "The maximum depth (distance forward) the Tunnel/Stairs mode will dig."
+            description = "The maximum depth (distance forward) the Tunnel/Stairs mode will dig.",
+            maxValue = 256,
+            minValue = 1
         )
         public Integer tunnelMaxBlocks = 16;
 
