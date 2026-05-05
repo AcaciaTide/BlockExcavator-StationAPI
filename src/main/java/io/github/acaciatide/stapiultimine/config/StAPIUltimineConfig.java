@@ -65,7 +65,7 @@ public class StAPIUltimineConfig {
             name = "Allow Mining Without Correct Tool",
             description = "If enabled, allows vein mining even if you don't have the correct tool. WARNING: Blocks mined without the correct tool will drop nothing!"
         )
-        public Boolean forceVeinMine = true;
+        public Boolean forceVeinMine = false;
 
         @ConfigEntry(
             name = "Strict Tool Check for Connected Blocks",
