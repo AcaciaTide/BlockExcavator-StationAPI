@@ -100,6 +100,10 @@ public class ServerPlayerInteractionManagerMixin {
     @Inject(method = "onBlockBreakingAction", at = @At("HEAD"))
     private void captureDirection(int x, int y, int z, int direction, CallbackInfo ci) {
         stapiultimine_lastFace = direction;
+        // 例外等でフラグが残っていた場合のフェイルセーフとしてリセットする
+        stapiultimine_isVeinMining = false;
+        stapiultimine_isStartingVeinMine = false;
+        VeinMinerUtil.resetTeleportStatus();
     }
 
     // プレイヤーの Ultimine が有効な場合、追加ブロックを一括破壊する

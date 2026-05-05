@@ -33,6 +33,10 @@ public class InteractionManagerMixin {
         if (!ConfigInit.ADVANCED.teleportDrops) {
             VeinMinerUtil.currentPlayer = null;
         }
+        
+        // 例外等でフラグが残っていた場合のフェイルセーフ
+        VeinMinerUtil.isTeleportingDrops = false;
+        stapiultimine_isStartingVeinMine = false;
 
         // キーが押されている場合のみ一括破壊を試行する
         if (ClientInitListener.isUltimineKeyPressed()) {
