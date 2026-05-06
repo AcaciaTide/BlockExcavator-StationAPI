@@ -80,5 +80,46 @@ public class BlockExcavatorConfig {
             description = "If enabled, the vein mine will NOT spread to blocks your tool cannot harvest. If disabled, it breaks them anyway (dropping nothing)."
         )
         public Boolean strictToolCheck = true;
+
+        @ConfigEntry(
+                name = "Outline Color: Red",
+                description = "Red component of the outline color (0 to 255).",
+                maxValue = 255,
+                minValue = 0
+        )
+        public Integer outlineColorRed = 255;
+
+        @ConfigEntry(
+                name = "Outline Color: Green",
+                description = "Green component of the outline color (0 to 255).",
+                maxValue = 255,
+                minValue = 0
+        )
+        public Integer outlineColorGreen = 255;
+
+        @ConfigEntry(
+                name = "Outline Color: Blue",
+                description = "Blue component of the outline color (0 to 255).",
+                maxValue = 255,
+                minValue = 0
+        )
+        public Integer outlineColorBlue = 255;
+
+        @ConfigEntry(
+                name = "Outline Color: Alpha",
+                description = "Transparency of the outline color (0 = invisible, 255 = solid).",
+                maxValue = 255,
+                minValue = 0
+        )
+        public Integer outlineColorAlpha = 102;
+
+        @ConfigEntry(
+                name = "Outline Thickness",
+                description = "Thickness of the block outline. Max=10.0,Min=0.1",
+                maxValue = 10.0f,
+                minValue = 0.1f
+        )
+        public Float outlineThickness = 4.0f;
+
     }
 }

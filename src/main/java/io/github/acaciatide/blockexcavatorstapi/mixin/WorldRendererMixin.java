@@ -36,8 +36,8 @@ public abstract class WorldRendererMixin {
         // OpenGLの設定: 透視状態にして線を描画するための準備
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.4F); // 白色 (RGBA)
-        GL11.glLineWidth(4.0F); // 一番外側の外枠なのでかなり太めに設定する
+        GL11.glColor4f(io.github.acaciatide.blockexcavatorstapi.config.ConfigInit.ADVANCED.outlineColorRed / 255.0f, io.github.acaciatide.blockexcavatorstapi.config.ConfigInit.ADVANCED.outlineColorGreen / 255.0f, io.github.acaciatide.blockexcavatorstapi.config.ConfigInit.ADVANCED.outlineColorBlue / 255.0f, io.github.acaciatide.blockexcavatorstapi.config.ConfigInit.ADVANCED.outlineColorAlpha / 255.0f);
+        GL11.glLineWidth(io.github.acaciatide.blockexcavatorstapi.config.ConfigInit.ADVANCED.outlineThickness);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_DEPTH_TEST); // 壁越しでも見えるように深度テストを無効化
