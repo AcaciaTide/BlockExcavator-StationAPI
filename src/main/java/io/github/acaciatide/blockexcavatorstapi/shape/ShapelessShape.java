@@ -33,7 +33,7 @@ public class ShapelessShape extends AbstractMiningShape {
             int currentId = world.getBlockId(pos.getX(), pos.getY(), pos.getZ());
             int currentMeta = world.getBlockMeta(pos.getX(), pos.getY(), pos.getZ());
 
-            if (currentId == startBlock.id && currentMeta == startMeta) {
+            if (currentId == startBlock.id && (ConfigInit.ADVANCED.ignoreMetadataInShapeless || currentMeta == startMeta)) {
                 // ツール適正チェック
                 if (!canHarvest(player, currentId)) {
                     continue;

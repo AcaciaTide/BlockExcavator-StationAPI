@@ -64,6 +64,12 @@ public class BlockExcavatorConfig {
         public Boolean teleportDrops = false;
 
         @ConfigEntry(
+            name = "Ignore Metadata in Shapeless",
+            description = "If enabled, Shapeless mode will mine all connected blocks with the same ID, ignoring metadata (e.g. all colors of wool, all types of logs)."
+        )
+        public Boolean ignoreMetadataInShapeless = false;
+
+        @ConfigEntry(
             name = "Allow Mining Without Correct Tool",
             description = "If enabled, allows vein mining even if you don't have the correct tool. WARNING: Blocks mined without the correct tool will drop nothing!"
         )
