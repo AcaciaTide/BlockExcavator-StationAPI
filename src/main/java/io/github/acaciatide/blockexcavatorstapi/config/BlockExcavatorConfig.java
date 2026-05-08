@@ -22,8 +22,8 @@ public class BlockExcavatorConfig {
         public Integer tunnelMaxBlocks = 16;
 
         @ConfigEntry(
-                name = "Teleport Item Drops",
-                description = "Automatically teleports all mined items directly to your feet."
+            name = "Teleport Item Drops",
+            description = "Automatically teleports all mined items directly to your feet."
         )
         public Boolean teleportDrops = false;
 
@@ -68,58 +68,58 @@ public class BlockExcavatorConfig {
         public Boolean strictToolCheck = true;
 
         @ConfigEntry(
-                name = "Outline Color: Red",
-                description = "Red component of the outline color (0 to 255).",
-                maxValue = 255,
-                minValue = 0
+            name = "Outline Color: Red",
+            description = "Red component of the outline color (0 to 255).",
+            maxValue = 255,
+            minValue = 0
         )
         public Integer outlineColorRed = 255;
 
         @ConfigEntry(
-                name = "Outline Color: Green",
-                description = "Green component of the outline color (0 to 255).",
-                maxValue = 255,
-                minValue = 0
+            name = "Outline Color: Green",
+            description = "Green component of the outline color (0 to 255).",
+            maxValue = 255,
+            minValue = 0
         )
         public Integer outlineColorGreen = 255;
 
         @ConfigEntry(
-                name = "Outline Color: Blue",
-                description = "Blue component of the outline color (0 to 255).",
-                maxValue = 255,
-                minValue = 0
+            name = "Outline Color: Blue",
+            description = "Blue component of the outline color (0 to 255).",
+            maxValue = 255,
+            minValue = 0
         )
         public Integer outlineColorBlue = 255;
 
         @ConfigEntry(
-                name = "Outline Color: Alpha",
-                description = "Transparency of the outline color (0 = invisible, 255 = solid).",
-                maxValue = 255,
-                minValue = 0
+            name = "Outline Color: Alpha",
+            description = "Transparency of the outline color (0 = invisible, 255 = solid).",
+            maxValue = 255,
+            minValue = 0
         )
         public Integer outlineColorAlpha = 102;
 
         @ConfigEntry(
-                name = "Outline Thickness",
-                description = "Thickness of the block outline. Max=10.0,Min=0.1",
-                maxValue = 10.0f,
-                minValue = 0.1f
+            name = "Outline Thickness",
+            description = "Thickness of the block outline. Max=10.0,Min=0.1",
+            maxValue = 10.0f,
+            minValue = 0.1f
         )
         public Float outlineThickness = 4.0f;
 
         @ConfigEntry(
-                name = "HUD X Position Offset",
-                description = "Moves the on-screen status text left or right. Useful if it overlaps with other mods.",
-                maxValue = 9999,
-                minValue = 0
+            name = "HUD X Position Offset",
+            description = "Moves the on-screen status text left or right. Useful if it overlaps with other mods.",
+            maxValue = 9999,
+            minValue = 0
         )
         public Integer hudOffsetX = 0;
 
         @ConfigEntry(
-                name = "HUD Y Position Offset",
-                description = "Moves the on-screen status text up or down. Useful if it overlaps with other mods.",
-                maxValue = 9999,
-                minValue = 0
+            name = "HUD Y Position Offset",
+            description = "Moves the on-screen status text up or down. Useful if it overlaps with other mods.",
+            maxValue = 9999,
+            minValue = 0
         )
         public Integer hudOffsetY = 0;
     }
