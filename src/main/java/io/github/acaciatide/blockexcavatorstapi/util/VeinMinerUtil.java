@@ -94,7 +94,7 @@ public class VeinMinerUtil {
                     // 適正ツールがある場合のみ、アイテムドロップや統計処理を呼び出す
                     if (currentCanHarvest && currentBlock != null) {
                         // teleportDropsがONの場合はフラグを立てておき、ItemEntityMixinにフックさせる
-                        if (ConfigInit.ADVANCED.teleportDrops) {
+                        if (ConfigInit.GENERAL.teleportDrops) {
                             isTeleportingDrops = true;
                             currentPlayer = player;
                         }

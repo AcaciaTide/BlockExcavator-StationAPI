@@ -137,7 +137,7 @@ public class ServerPlayerInteractionManagerMixin {
         blockexcavatorstapi_isStartingVeinMine = true;
 
         // teleportDrops が有効な場合は ItemEntityMixin が参照するフラグを立てる
-        if (ConfigInit.ADVANCED.teleportDrops) {
+        if (ConfigInit.GENERAL.teleportDrops) {
             VeinMinerUtil.isTeleportingDrops = true;
             VeinMinerUtil.currentPlayer = this.player;
             VeinMinerUtil.originBlockPos = new BlockPos(x, y, z);

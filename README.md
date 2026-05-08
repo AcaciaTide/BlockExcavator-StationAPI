@@ -11,7 +11,7 @@ By holding down a specified key while breaking a block, you can mine connected b
   - `Stairs Up / Down` (Digs diagonally up or down like stairs)
   - `Square 3x3` (Digs a 3x3 area facing forward)
 - **Visual Outline**: The blocks targeted for destruction are highlighted on the screen, allowing you to see exactly what will be mined beforehand. (Color and thickness can be fully customized in Advanced settings)
-- **Automatic Item Collection**: Dropped items from mined blocks automatically gather at the player's feet (Toggle via "Teleport Item Drops" in the Advanced tab)
+- **Automatic Item Collection**: Dropped items from mined blocks automatically gather at the player's feet (Toggle via "Teleport Item Drops" in the General tab)
 - **Multiplayer Support**: Works in server environments.
 
 ## Usage

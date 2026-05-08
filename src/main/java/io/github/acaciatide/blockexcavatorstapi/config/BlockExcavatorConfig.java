@@ -22,6 +22,12 @@ public class BlockExcavatorConfig {
         public Integer tunnelMaxBlocks = 16;
 
         @ConfigEntry(
+                name = "Teleport Item Drops",
+                description = "Automatically teleports all mined items directly to your feet."
+        )
+        public Boolean teleportDrops = false;
+
+        @ConfigEntry(
             name = "3x3 Mode: Ignore Block Type",
             description = "If enabled, 3x3 mode will break any mineable blocks in its area. If disabled, it only breaks blocks identical to the one you clicked."
         )
@@ -39,29 +45,9 @@ public class BlockExcavatorConfig {
         )
         public Boolean displayHudStatus = true;
 
-        @ConfigEntry(
-            name = "HUD X Position Offset",
-            description = "Moves the on-screen status text left or right. Useful if it overlaps with other mods.",
-            maxValue = 9999,
-            minValue = 0
-        )
-        public Integer hudOffsetX = 0;
-
-        @ConfigEntry(
-            name = "HUD Y Position Offset",
-            description = "Moves the on-screen status text up or down. Useful if it overlaps with other mods.",
-            maxValue = 9999,
-            minValue = 0
-        )
-        public Integer hudOffsetY = 0;
     }
 
     public static class AdvancedConfig {
-        @ConfigEntry(
-            name = "Teleport Item Drops",
-            description = "Automatically teleports all mined items directly to your feet."
-        )
-        public Boolean teleportDrops = false;
 
         @ConfigEntry(
             name = "Ignore Metadata in Shapeless",
@@ -121,5 +107,20 @@ public class BlockExcavatorConfig {
         )
         public Float outlineThickness = 4.0f;
 
+        @ConfigEntry(
+                name = "HUD X Position Offset",
+                description = "Moves the on-screen status text left or right. Useful if it overlaps with other mods.",
+                maxValue = 9999,
+                minValue = 0
+        )
+        public Integer hudOffsetX = 0;
+
+        @ConfigEntry(
+                name = "HUD Y Position Offset",
+                description = "Moves the on-screen status text up or down. Useful if it overlaps with other mods.",
+                maxValue = 9999,
+                minValue = 0
+        )
+        public Integer hudOffsetY = 0;
     }
 }

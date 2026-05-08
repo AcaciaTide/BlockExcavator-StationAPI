@@ -21,8 +21,8 @@ public class InGameHudMixin {
     @Inject(method = "render(FZII)V", at = @At("TAIL"))
     private void renderHUD(float tickDelta, boolean screenOpen, int mouseX, int mouseY, CallbackInfo ci) {
         if (ClientInitListener.isExcavatorKeyPressed() && ConfigInit.GENERAL.displayHudStatus) {
-            int offsetX = (ConfigInit.GENERAL.hudOffsetX != null) ? ConfigInit.GENERAL.hudOffsetX : 0;
-            int offsetY = (ConfigInit.GENERAL.hudOffsetY != null) ? ConfigInit.GENERAL.hudOffsetY : 0;
+            int offsetX = (ConfigInit.ADVANCED.hudOffsetX != null) ? ConfigInit.ADVANCED.hudOffsetX : 0;
+            int offsetY = (ConfigInit.ADVANCED.hudOffsetY != null) ? ConfigInit.ADVANCED.hudOffsetY : 0;
             
             int baseX = 5 + offsetX;
             int baseY = 15 + offsetY;
