@@ -9,7 +9,8 @@ public class BlockExcavatorConfig {
             name = "Max Blocks to Mine",
             description = "Maximum number of blocks that can be mined in a single vein mine operation. Max=256,Min=1",
             maxValue = 256,
-            minValue = 1
+            minValue = 1,
+            multiplayerSynced = true
         )
         public Integer maxBlocks = 64;
 
@@ -17,25 +18,29 @@ public class BlockExcavatorConfig {
             name = "Tunnel/Stairs Mode: Dig Depth",
             description = "The maximum depth (distance forward) the Tunnel/Stairs mode will dig. Max=256,Min=1",
             maxValue = 256,
-            minValue = 1
+            minValue = 1,
+            multiplayerSynced = true
         )
         public Integer tunnelMaxBlocks = 16;
 
         @ConfigEntry(
             name = "Teleport Item Drops",
-            description = "Automatically teleports all mined items directly to your feet."
+            description = "Automatically teleports all mined items directly to your feet.",
+            multiplayerSynced = true
         )
         public Boolean teleportDrops = false;
 
         @ConfigEntry(
             name = "3x3 Mode: Ignore Block Type",
-            description = "If enabled, 3x3 mode will break any mineable blocks in its area. If disabled, it only breaks blocks identical to the one you clicked."
+            description = "If enabled, 3x3 mode will break any mineable blocks in its area. If disabled, it only breaks blocks identical to the one you clicked.",
+            multiplayerSynced = true
         )
         public Boolean hammerMode3x3 = false;
 
         @ConfigEntry(
             name = "Consume Tool Durability",
-            description = "If enabled, your tool will lose durability for every block mined. If disabled, durability is only consumed for the first block."
+            description = "If enabled, your tool will lose durability for every block mined. If disabled, durability is only consumed for the first block.",
+            multiplayerSynced = true
         )
         public Boolean consumeDurability = true;
 
@@ -51,19 +56,22 @@ public class BlockExcavatorConfig {
 
         @ConfigEntry(
             name = "Ignore Metadata in Shapeless",
-            description = "If enabled, Shapeless mode will mine all connected blocks with the same ID, ignoring metadata (e.g. all colors of wool, all types of logs)."
+            description = "If enabled, Shapeless mode will mine all connected blocks with the same ID, ignoring metadata (e.g. all colors of wool, all types of logs).",
+            multiplayerSynced = true
         )
         public Boolean ignoreMetadataInShapeless = false;
 
         @ConfigEntry(
             name = "Allow Mining Without Correct Tool",
-            description = "If enabled, allows vein mining even if you don't have the correct tool. WARNING: Blocks mined without the correct tool will drop nothing!"
+            description = "If enabled, allows vein mining even if you don't have the correct tool. WARNING: Blocks mined without the correct tool will drop nothing!",
+            multiplayerSynced = true
         )
         public Boolean forceVeinMine = false;
 
         @ConfigEntry(
             name = "Strict Tool Check for Connected Blocks",
-            description = "If enabled, the vein mine will NOT spread to blocks your tool cannot harvest. If disabled, it breaks them anyway (dropping nothing)."
+            description = "If enabled, the vein mine will NOT spread to blocks your tool cannot harvest. If disabled, it breaks them anyway (dropping nothing).",
+            multiplayerSynced = true
         )
         public Boolean strictToolCheck = true;
 
