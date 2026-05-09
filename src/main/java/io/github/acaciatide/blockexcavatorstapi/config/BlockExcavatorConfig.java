@@ -45,6 +45,15 @@ public class BlockExcavatorConfig {
         public Boolean consumeDurability = true;
 
         @ConfigEntry(
+            name = "Stop at Durability",
+            description = "Stops vein mining when the tool's remaining durability reaches this value. Set to 1 to prevent the tool from breaking.",
+            maxValue = 9999,
+            minValue = 0,
+            multiplayerSynced = true
+        )
+        public Integer stopAtDurability = 1;
+
+        @ConfigEntry(
             name = "Show On-Screen Status",
             description = "Displays the current vein mine mode and block count on your screen when holding the hotkey."
         )

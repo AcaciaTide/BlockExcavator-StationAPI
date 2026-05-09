@@ -153,6 +153,17 @@ public class ServerPlayerInteractionManagerMixin {
                 // 起点ブロックはバニラの tryBreakBlock がそのまま処理するためスキップする
                 if (pos.getX() == x && pos.getY() == y && pos.getZ() == z) continue;
 
+                // 耐久値ストップの事前チェック
+                if (ConfigInit.GENERAL.consumeDurability && ConfigInit.GENERAL.stopAtDurability > 0) {
+                    ItemStack held = this.player.getHand();
+                    if (held != null && held.isDamageable()) {
+                        int remaining = held.getMaxDamage() - held.getDamage();
+                        if (remaining <= ConfigInit.GENERAL.stopAtDurability) {
+                            break; // これ以上破壊しない
+                        }
+                    }
+                }
+
                 if (blockexcavatorstapi_breakBlock(pos.getX(), pos.getY(), pos.getZ())) {
                     break;
                 }

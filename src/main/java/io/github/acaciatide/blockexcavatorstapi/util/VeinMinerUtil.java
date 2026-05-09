@@ -82,6 +82,17 @@ public class VeinMinerUtil {
                 int currentId = world.getBlockId(pos.getX(), pos.getY(), pos.getZ());
                 int currentMeta = world.getBlockMeta(pos.getX(), pos.getY(), pos.getZ());
 
+                // 耐久値ストップの事前チェック
+                if (ConfigInit.GENERAL.consumeDurability && ConfigInit.GENERAL.stopAtDurability > 0) {
+                    ItemStack held = player.getHand();
+                    if (held != null && held.isDamageable()) {
+                        int remaining = held.getMaxDamage() - held.getDamage();
+                        if (remaining <= ConfigInit.GENERAL.stopAtDurability) {
+                            break; // これ以上破壊しない
+                        }
+                    }
+                }
+
                 // ブロックがまだ存在するかのみをチェック（詳細な条件はgetVeinBlocksで検証済み）
                 if (currentId > 0) {
                     Block currentBlock = Block.BLOCKS[currentId];
