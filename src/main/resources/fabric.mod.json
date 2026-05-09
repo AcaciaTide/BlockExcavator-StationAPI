@@ -34,7 +34,7 @@
 
   "depends": {
     "minecraft": "1.0.0-beta.7.3",
-    "stationapi": ">=2.0.0-alpha.1",
-    "gcapi3": ">=3.0.0"
+    "stationapi": ">=2.0.0-alpha.5.4",
+    "gcapi3": ">=3.2.5"
   }
 }
