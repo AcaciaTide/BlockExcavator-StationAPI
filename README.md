@@ -26,6 +26,7 @@ By holding down a specified key while breaking a block, you can mine connected b
 
 ## Credits & Acknowledgements
 The features and ideas of this mod were heavily inspired by the amazing mod [**FTB Ultimine**](https://github.com/FTBTeam/FTB-Ultimine) by the FTB Team.
+
 *Please note: The source code for this mod was designed and written completely from scratch specifically for the Minecraft Beta 1.7.3 and StationAPI. It does not contain any copied or repurposed code from FTB Ultimine.*
 
 ## License
