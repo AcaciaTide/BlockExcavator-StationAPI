@@ -151,32 +151,32 @@ public class ExcavatorRenderCache {
                 // 隣が破壊対象でなければ、その面は「外部に露出している面（シルエットの一部）」と判定する
                 if (!targetSet.contains(encodePos(nx, ny, nz))) {
                     // 露出した面の外周（4辺）を記録する
-                    if (dir == Direction.DOWN) { // Y- 面
+                    if (dir == Direction.DOWN) { // Y- 面 (底面)
                         addEdge(edgeNormals, (byte)0, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)0, bx, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)2, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)2, bx+1, by, bz, dir);
-                    } else if (dir == Direction.UP) { // Y+ 面
+                    } else if (dir == Direction.UP) { // Y+ 面 (上面)
                         addEdge(edgeNormals, (byte)0, bx, by+1, bz, dir);
                         addEdge(edgeNormals, (byte)0, bx, by+1, bz+1, dir);
                         addEdge(edgeNormals, (byte)2, bx, by+1, bz, dir);
                         addEdge(edgeNormals, (byte)2, bx+1, by+1, bz, dir);
-                    } else if (dir == Direction.EAST) { // Z- 面
+                    } else if (dir == Direction.NORTH) { // Z- 面 (奥面)
                         addEdge(edgeNormals, (byte)0, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)0, bx, by+1, bz, dir);
                         addEdge(edgeNormals, (byte)1, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)1, bx+1, by, bz, dir);
-                    } else if (dir == Direction.WEST) { // Z+ 面
+                    } else if (dir == Direction.SOUTH) { // Z+ 面 (手前面)
                         addEdge(edgeNormals, (byte)0, bx, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)0, bx, by+1, bz+1, dir);
                         addEdge(edgeNormals, (byte)1, bx, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)1, bx+1, by, bz+1, dir);
-                    } else if (dir == Direction.NORTH) { // X- 面
+                    } else if (dir == Direction.WEST) { // X- 面 (左側面)
                         addEdge(edgeNormals, (byte)1, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)1, bx, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)2, bx, by, bz, dir);
                         addEdge(edgeNormals, (byte)2, bx, by+1, bz, dir);
-                    } else if (dir == Direction.SOUTH) { // X+ 面
+                    } else if (dir == Direction.EAST) { // X+ 面 (右側面)
                         addEdge(edgeNormals, (byte)1, bx+1, by, bz, dir);
                         addEdge(edgeNormals, (byte)1, bx+1, by, bz+1, dir);
                         addEdge(edgeNormals, (byte)2, bx+1, by, bz, dir);
