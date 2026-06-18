@@ -22,51 +22,65 @@ public class ExcavatorRenderCache {
         }
     }
 
-    private static class Edge {
-        final byte axis; // 0=X, 1=Y, 2=Z
-        final int x, y, z;
+    // 方向配列を事前にキャッシュし、配列のコピー生成を防ぐ
+    private static final Direction[] DIRECTIONS = Direction.values();
 
-        Edge(byte axis, int x, int y, int z) {
-            this.axis = axis;
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Edge)) return false;
-            Edge edge = (Edge) o;
-            return axis == edge.axis && x == edge.x && y == edge.y && z == edge.z;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = axis;
-            result = 31 * result + x;
-            result = 31 * result + y;
-            result = 31 * result + z;
-            return result;
-        }
-    }
-
-    private static int lastX = Integer.MIN_VALUE;
-    private static int lastY = Integer.MIN_VALUE;
-    private static int lastZ = Integer.MIN_VALUE;
+    private static volatile int lastX = Integer.MIN_VALUE;
+    private static volatile int lastY = Integer.MIN_VALUE;
+    private static volatile int lastZ = Integer.MIN_VALUE;
+    private static volatile int lastId = -1;
+    private static volatile int lastMeta = -1;
     
-    // 計算済みの「外側だけを残した」線のリスト
-    public static List<LineSegment> cachedLines = Collections.emptyList();
+    // 計算済みの「外側だけを残した」線のリスト。スレッド間の可視性を保証するためvolatileを付与する
+    public static volatile List<LineSegment> cachedLines = Collections.emptyList();
     
-    // 計算済みの対象ブロック数
-    public static int cachedBlockCount = 0;
+    // 計算済みの対象ブロック数。スレッド間の可視性を保証するためvolatileを付与する
+    public static volatile int cachedBlockCount = 0;
 
     /**
-     * MapにEdgeとそれを共有する面の法線(方向)を記録する
+     * 辺の向き（軸）と始点座標（x, y, z）を1つの 64ビット long 値にパックする。
+     * ビット割り当て：
+     * - 軸 (axis): 2 ビット (ビット 60 〜 61) -> 0=X軸, 1=Y軸, 2=Z軸
+     * - X 座標: 24 ビット (ビット 36 〜 59) -> 表現範囲: -8,388,608 〜 8,388,607
+     * - Y 座標: 12 ビット (ビット 24 〜 35) -> 表現範囲: -2,048 〜 2,047
+     * - Z 座標: 24 ビット (ビット 0 〜 23)  -> 表現範囲: -8,388,608 〜 8,388,607
+     * 
+     * @param axis 軸のID (0=X, 1=Y, 2=Z)
+     * @param x X座標
+     * @param y Y座標
+     * @param z Z座標
+     * @return パックされた long 値
      */
-    private static void addEdge(Map<Edge, Set<Direction>> map, byte axis, int x, int y, int z, Direction dir) {
-        Edge e = new Edge(axis, x, y, z);
-        map.computeIfAbsent(e, k -> new HashSet<>()).add(dir);
+    private static long encodeEdge(byte axis, int x, int y, int z) {
+        return ((long) (axis & 3) << 60) |
+               ((long) (x & 0xFFFFFF) << 36) |
+               ((long) (y & 0xFFF) << 24) |
+               (z & 0xFFFFFF);
+    }
+
+    /**
+     * ブロックの3次元座標（x, y, z）を1つの 64ビット long 値にパックする。
+     * ビット割り当て：
+     * - X 座標: 26 ビット (ビット 38 〜 63) -> 表現範囲: -33,554,432 〜 33,554,431
+     * - Y 座標: 12 ビット (ビット 26 〜 37) -> 表現範囲: -2,048 〜 2,047
+     * - Z 座標: 26 ビット (ビット 0 〜 25)  -> 表現範囲: -33,554,432 〜 33,554,431
+     * 
+     * @param x X座標
+     * @param y Y座標
+     * @param z Z座標
+     * @return パックされた long 値
+     */
+    private static long encodePos(int x, int y, int z) {
+        return ((long) (x & 0x3FFFFFF) << 38) |
+               ((long) (y & 0xFFF) << 26) |
+               (z & 0x3FFFFFF);
+    }
+
+    // Mapに辺のキーと方向のビットマスクを記録する
+    private static void addEdge(Map<Long, Byte> map, byte axis, int x, int y, int z, Direction dir) {
+        long key = encodeEdge(axis, x, y, z);
+        byte mask = (byte) (1 << dir.ordinal());
+        map.merge(key, mask, (oldVal, newVal) -> (byte) (oldVal | newVal));
     }
 
     /**
@@ -77,26 +91,31 @@ public class ExcavatorRenderCache {
             cachedLines = Collections.emptyList();
             cachedBlockCount = 0;
             lastX = lastY = lastZ = Integer.MIN_VALUE;
+            lastId = -1;
+            lastMeta = -1;
             return;
         }
 
-        // ブロック座標が変わっていなければ再計算をスキップ
-        if (hit.blockX == lastX && hit.blockY == lastY && hit.blockZ == lastZ) {
+        int id = world.getBlockId(hit.blockX, hit.blockY, hit.blockZ);
+        if (id <= 0) {
+            cachedLines = Collections.emptyList();
+            return;
+        }
+
+        int meta = world.getBlockMeta(hit.blockX, hit.blockY, hit.blockZ);
+
+        // ブロック座標、ID、メタデータのいずれかが変わっていれば再計算する
+        if (hit.blockX == lastX && hit.blockY == lastY && hit.blockZ == lastZ && id == lastId && meta == lastMeta) {
             return;
         }
 
         lastX = hit.blockX;
         lastY = hit.blockY;
         lastZ = hit.blockZ;
-
-        int id = world.getBlockId(lastX, lastY, lastZ);
-        if (id <= 0) {
-            cachedLines = Collections.emptyList();
-            return;
-        }
+        lastId = id;
+        lastMeta = meta;
 
         Block block = Block.BLOCKS[id];
-        int meta = world.getBlockMeta(lastX, lastY, lastZ);
         // 通常の破壊と同じリストを取得する
         Set<BlockPos> targets = VeinMinerUtil.getVeinBlocks(world, player, lastX, lastY, lastZ, block, meta, hit.side);
 
@@ -108,10 +127,16 @@ public class ExcavatorRenderCache {
         
         cachedBlockCount = targets.size();
 
+        // MutableBlockPosによるHashSetルックアップを避けるため、Set<Long>にエンコードする
+        Set<Long> targetSet = new HashSet<>((int) (targets.size() / 0.75f) + 1);
+        for (BlockPos p : targets) {
+            targetSet.add(encodePos(p.getX(), p.getY(), p.getZ()));
+        }
+
         // 輪郭メッシュ抽出ロジック
         int estimatedEdges = targets.size() * 12;
-        Map<Edge, Set<Direction>> edgeNormals = new HashMap<>(estimatedEdges);
-        MutableBlockPos searchPos = new MutableBlockPos();
+        int initialCapacity = (int) (estimatedEdges / 0.75f) + 1;
+        Map<Long, Byte> edgeNormals = new HashMap<>(initialCapacity);
 
         for (BlockPos pos : targets) {
             int bx = pos.getX();
@@ -119,11 +144,13 @@ public class ExcavatorRenderCache {
             int bz = pos.getZ();
 
             // 各ブロックの6方向の面を調べる
-            for (Direction dir : Direction.values()) {
-                searchPos.set(bx + dir.getOffsetX(), by + dir.getOffsetY(), bz + dir.getOffsetZ());
+            for (Direction dir : DIRECTIONS) {
+                int nx = bx + dir.getOffsetX();
+                int ny = by + dir.getOffsetY();
+                int nz = bz + dir.getOffsetZ();
 
-                // 隣が破壊対象でなければ、その面は「外部に露出している面（シルエットの一部）」
-                if (!targets.contains(searchPos)) {
+                // 隣が破壊対象でなければ、その面は「外部に露出している面（シルエットの一部）」と判定する
+                if (!targetSet.contains(encodePos(nx, ny, nz))) {
                     // 露出した面の外周（4辺）を記録する
                     if (dir == Direction.DOWN) { // Y- 面
                         addEdge(edgeNormals, (byte)0, bx, by, bz, dir);
@@ -160,20 +187,39 @@ public class ExcavatorRenderCache {
             }
         }
 
-        // 余分な内側の線をフィルタリング
-        List<LineSegment> result = new ArrayList<>(estimatedEdges / 2);
+        // 余分な内側の線をフィルタリングする
+        List<LineSegment> result = new ArrayList<>(targets.size() * 2);
         
-        for (Map.Entry<Edge, Set<Direction>> entry : edgeNormals.entrySet()) {
-            // 一番外側の「角・コーナー」であれば、異なる向きの露出面が交わるので方向(法線)が2つ以上になる。
-            // 面積が1（方向が1つ）のものは、平らな面上にある隣接ブロックのつなぎ目＝除外する
-            if (entry.getValue().size() > 1) {
-                Edge e = entry.getKey();
-                if (e.axis == 0) {
-                    result.add(new LineSegment(e.x, e.y, e.z, e.x + 1, e.y, e.z));
-                } else if (e.axis == 1) {
-                    result.add(new LineSegment(e.x, e.y, e.z, e.x, e.y + 1, e.z));
-                } else if (e.axis == 2) {
-                    result.add(new LineSegment(e.x, e.y, e.z, e.x, e.y, e.z + 1));
+        for (Map.Entry<Long, Byte> entry : edgeNormals.entrySet()) {
+            byte mask = entry.getValue();
+            // 一番外側の「角・コーナー」であれば、異なる向きの露出面が交わるので方向のビット数が2つ以上になる
+            if (Integer.bitCount(mask & 0xFF) > 1) {
+                long key = entry.getKey();
+                // 64ビット long 値から各要素（軸、x, y, z 座標）を抽出する。
+                // - axis: ビット 60〜61 を抽出し、下位2ビットを取り出す。
+                // - x: ビット 36〜59 を抽出し、下位24ビットを取り出す。
+                // - y: ビット 24〜35 を抽出し、下位12ビットを取り出す。
+                // - z: ビット 0〜23 を抽出し、下位24ビットを取り出す。
+                byte axis = (byte) ((key >> 60) & 3);
+                int x = (int) ((key >> 36) & 0xFFFFFF);
+                int y = (int) ((key >> 24) & 0xFFF);
+                int z = (int) (key & 0xFFFFFF);
+
+                // 24ビット（X, Z）および 12ビット（Y）の符号ビットを検出し、負の座標を復元する（符号拡張）。
+                // - X と Z: 24ビット目の符号ビット（0x800000）が立っている場合、負の座標と判定して
+                //   上位8ビットを 1 で埋める（x |= 0xFF000000）ことで、32ビット符号付き整数へと正しく復元する。
+                // - Y: 12ビット目の符号ビット（0x800）が立っている場合、負の座標と判定して
+                //   上位20ビットを 1 で埋める（y |= 0xFFFFF000）ことで、32ビット符号付き整数へと正しく復元する。
+                if ((x & 0x800000) != 0) x |= 0xFF000000;
+                if ((y & 0x800) != 0) y |= 0xFFFFF000;
+                if ((z & 0x800000) != 0) z |= 0xFF000000;
+
+                if (axis == 0) {
+                    result.add(new LineSegment(x, y, z, x + 1, y, z));
+                } else if (axis == 1) {
+                    result.add(new LineSegment(x, y, z, x, y + 1, z));
+                } else if (axis == 2) {
+                    result.add(new LineSegment(x, y, z, x, y, z + 1));
                 }
             }
         }
@@ -185,5 +231,7 @@ public class ExcavatorRenderCache {
      */
     public static void resetCache() {
         lastX = lastY = lastZ = Integer.MIN_VALUE;
+        lastId = -1;
+        lastMeta = -1;
     }
 }
