@@ -8,7 +8,6 @@ import net.minecraft.util.hit.HitResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.modificationstation.stationapi.api.util.math.Direction;
-import net.modificationstation.stationapi.api.util.math.MutableBlockPos;
 
 import java.util.*;
 
