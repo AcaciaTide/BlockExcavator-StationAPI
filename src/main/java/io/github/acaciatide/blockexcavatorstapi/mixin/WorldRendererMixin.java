@@ -47,11 +47,14 @@ public abstract class WorldRendererMixin {
         double offsetY = player.lastTickY + (player.y - player.lastTickY) * (double)tickDelta;
         double offsetZ = player.lastTickZ + (player.z - player.lastTickZ) * (double)tickDelta;
 
-        // すべての線を「GL_LINES (1)」モードで一括で処理する
+        // すべての線を「GL_LINES」モードで一括処理する
         Tessellator tessellator = Tessellator.INSTANCE;
         tessellator.start(1); 
         
-        for (ExcavatorRenderCache.LineSegment line : lines) {
+        // Iteratorオブジェクトの新規生成を防ぐため、インデックスループで描画データを追加する
+        int size = lines.size();
+        for (int k = 0; k < size; k++) {
+            ExcavatorRenderCache.LineSegment line = lines.get(k);
             tessellator.vertex(line.x1 - offsetX, line.y1 - offsetY, line.z1 - offsetZ);
             tessellator.vertex(line.x2 - offsetX, line.y2 - offsetY, line.z2 - offsetZ);
         }
