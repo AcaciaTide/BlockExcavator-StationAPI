@@ -1,6 +1,10 @@
 package io.github.acaciatide.blockexcavatorstapi.util;
 
 import io.github.acaciatide.blockexcavatorstapi.events.init.ClientInitListener;
+import it.unimi.dsi.fastutil.longs.Long2ByteMap;
+import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.HitResult;
@@ -75,11 +79,12 @@ public class ExcavatorRenderCache {
                (z & 0x3FFFFFF);
     }
 
-    // Mapに辺のキーと方向のビットマスクを記録する
-    private static void addEdge(Map<Long, Byte> map, byte axis, int x, int y, int z, Direction dir) {
+    // Mapに辺のキーと方向のビットマスクを記録する。ラムダの生成を防ぐため、プリミティブ直操作で行う
+    private static void addEdge(Long2ByteMap map, byte axis, int x, int y, int z, Direction dir) {
         long key = encodeEdge(axis, x, y, z);
         byte mask = (byte) (1 << dir.ordinal());
-        map.merge(key, mask, (oldVal, newVal) -> (byte) (oldVal | newVal));
+        byte oldVal = map.get(key); // キーが存在しない場合はデフォルト値 0 が返る
+        map.put(key, (byte) (oldVal | mask));
     }
 
     /**
@@ -126,8 +131,8 @@ public class ExcavatorRenderCache {
         
         cachedBlockCount = targets.size();
 
-        // MutableBlockPosによるHashSetルックアップを避けるため、Set<Long>にエンコードする
-        Set<Long> targetSet = new HashSet<>((int) (targets.size() / 0.75f) + 1);
+        // MutableBlockPosによるHashSetルックアップを避けるため、LongOpenHashSetにエンコードする
+        LongSet targetSet = new LongOpenHashSet((int) (targets.size() / 0.75f) + 1);
         for (BlockPos p : targets) {
             targetSet.add(encodePos(p.getX(), p.getY(), p.getZ()));
         }
@@ -135,7 +140,8 @@ public class ExcavatorRenderCache {
         // 輪郭メッシュ抽出ロジック
         int estimatedEdges = targets.size() * 12;
         int initialCapacity = (int) (estimatedEdges / 0.75f) + 1;
-        Map<Long, Byte> edgeNormals = new HashMap<>(initialCapacity);
+        Long2ByteMap edgeNormals = new Long2ByteOpenHashMap(initialCapacity);
+        edgeNormals.defaultReturnValue((byte) 0);
 
         for (BlockPos pos : targets) {
             int bx = pos.getX();
@@ -189,11 +195,12 @@ public class ExcavatorRenderCache {
         // 余分な内側の線をフィルタリングする
         List<LineSegment> result = new ArrayList<>(targets.size() * 2);
         
-        for (Map.Entry<Long, Byte> entry : edgeNormals.entrySet()) {
-            byte mask = entry.getValue();
+        // オブジェクトのボクシングを防ぐため、プリミティブ直操作で走査する
+        for (Long2ByteMap.Entry entry : edgeNormals.long2ByteEntrySet()) {
+            byte mask = entry.getByteValue();
             // 一番外側の「角・コーナー」であれば、異なる向きの露出面が交わるので方向のビット数が2つ以上になる
             if (Integer.bitCount(mask & 0xFF) > 1) {
-                long key = entry.getKey();
+                long key = entry.getLongKey();
                 // 64ビット long 値から各要素（軸、x, y, z 座標）を抽出する。
                 // - axis: ビット 62〜63 を抽出し、下位2ビットを取り出す。
                 // - x: ビット 36〜61 を抽出し、下位26ビットを取り出す。

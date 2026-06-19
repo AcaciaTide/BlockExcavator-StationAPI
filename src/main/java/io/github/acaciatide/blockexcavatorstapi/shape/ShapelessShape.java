@@ -1,14 +1,15 @@
 package io.github.acaciatide.blockexcavatorstapi.shape;
 
 import io.github.acaciatide.blockexcavatorstapi.config.ConfigInit;
+import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.ArrayDeque;
 import java.util.HashSet;
-import java.util.Queue;
 import java.util.Set;
 
 public class ShapelessShape extends AbstractMiningShape {
@@ -77,9 +78,9 @@ public class ShapelessShape extends AbstractMiningShape {
         // 最終的に返すBlockPosのセット
         Set<BlockPos> blocks = new HashSet<>(maxBlocksVal * 2);
         
-        // オブジェクトの新規生成を防ぐため、ArrayDequeとlong値で探索を管理する
-        Queue<Long> queue = new ArrayDeque<>(maxBlocksVal * 4);
-        Set<Long> visited = new HashSet<>(maxBlocksVal * 4);
+        // オブジェクトのボクシングを防ぐため、fastutil のプリミティブコレクションを使用する
+        LongArrayFIFOQueue queue = new LongArrayFIFOQueue(maxBlocksVal * 4);
+        LongSet visited = new LongOpenHashSet(maxBlocksVal * 4);
 
         long startPacked = encodePos(startX, startY, startZ);
         visited.add(startPacked);
@@ -90,7 +91,7 @@ public class ShapelessShape extends AbstractMiningShape {
         addNeighbors(queue, visited, startX, startY, startZ);
 
         while (!queue.isEmpty() && blocks.size() < maxBlocksVal) {
-            long packed = queue.poll();
+            long packed = queue.dequeueLong();
             int px = getX(packed);
             int py = getY(packed);
             int pz = getZ(packed);
@@ -113,7 +114,7 @@ public class ShapelessShape extends AbstractMiningShape {
     }
 
     // 周囲26近傍を探索し、未訪問の座標をキューと訪問済みに登録する
-    private void addNeighbors(Queue<Long> queue, Set<Long> visited, int x, int y, int z) {
+    private void addNeighbors(LongArrayFIFOQueue queue, LongSet visited, int x, int y, int z) {
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 for (int dz = -1; dz <= 1; dz++) {
@@ -124,7 +125,7 @@ public class ShapelessShape extends AbstractMiningShape {
                     long packed = encodePos(nx, ny, nz);
                     // visitedへの追加に成功した場合（未訪問の場合）のみキューに登録する
                     if (visited.add(packed)) {
-                        queue.add(packed);
+                        queue.enqueue(packed);
                     }
                 }
             }
