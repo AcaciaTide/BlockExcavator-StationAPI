@@ -14,6 +14,11 @@ public class ItemEntityMixin {
 
     @Inject(method = "<init>(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V", at = @At("TAIL"))
     private void onInit(World world, double x, double y, double z, ItemStack stack, CallbackInfo ci) {
+        // 一括破壊の処理中でない場合は即時リターンし、平常時のオーバーヘッドをゼロにする
+        if (!VeinMinerUtil.isTeleportingDrops && VeinMinerUtil.originBlockPos == null) {
+            return;
+        }
+
         boolean isOrigin = false;
         if (VeinMinerUtil.originBlockPos != null) {
             int ix = (int) Math.floor(x);
