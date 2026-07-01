@@ -12,6 +12,7 @@ import net.minecraft.util.hit.HitResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.modificationstation.stationapi.api.util.math.Direction;
+import net.modificationstation.stationapi.api.util.math.StationBlockPos;
 
 import java.util.*;
 
@@ -58,24 +59,6 @@ public class ExcavatorRenderCache {
         return ((long) (axis & 3) << 62) |
                ((long) (x & 0x3FFFFFF) << 36) |
                ((long) (y & 0x3FF) << 26) |
-               (z & 0x3FFFFFF);
-    }
-
-    /**
-     * ブロックの3次元座標（x, y, z）を1つの 64ビット long 値にパックする。
-     * ビット割り当て：
-     * - X 座標: 26 ビット (ビット 38 〜 63) -> 表現範囲: -33,554,432 〜 33,554,431
-     * - Y 座標: 12 ビット (ビット 26 〜 37) -> 表現範囲: -2,048 〜 2,047
-     * - Z 座標: 26 ビット (ビット 0 〜 25)  -> 表現範囲: -33,554,432 〜 33,554,431
-     * 
-     * @param x X座標
-     * @param y Y座標
-     * @param z Z座標
-     * @return パックされた long 値
-     */
-    private static long encodePos(int x, int y, int z) {
-        return ((long) (x & 0x3FFFFFF) << 38) |
-               ((long) (y & 0xFFF) << 26) |
                (z & 0x3FFFFFF);
     }
 
@@ -131,10 +114,9 @@ public class ExcavatorRenderCache {
         
         cachedBlockCount = targets.size();
 
-        // MutableBlockPosによるHashSetルックアップを避けるため、LongOpenHashSetにエンコードする
         LongSet targetSet = new LongOpenHashSet((int) (targets.size() / 0.75f) + 1);
         for (BlockPos p : targets) {
-            targetSet.add(encodePos(p.getX(), p.getY(), p.getZ()));
+            targetSet.add(StationBlockPos.asLong(p.getX(), p.getY(), p.getZ()));
         }
 
         // 輪郭メッシュ抽出ロジック
@@ -155,7 +137,7 @@ public class ExcavatorRenderCache {
                 int nz = bz + dir.getOffsetZ();
 
                 // 隣が破壊対象でなければ、その面は「外部に露出している面（シルエットの一部）」と判定する
-                if (!targetSet.contains(encodePos(nx, ny, nz))) {
+                if (!targetSet.contains(StationBlockPos.asLong(nx, ny, nz))) {
                     // 露出した面の外周（4辺）を記録する
                     if (dir == Direction.DOWN) { // Y- 面 (底面)
                         addEdge(edgeNormals, (byte)0, bx, by, bz, dir);
