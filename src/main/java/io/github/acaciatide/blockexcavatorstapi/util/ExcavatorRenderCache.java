@@ -18,8 +18,15 @@ import java.util.*;
 
 public class ExcavatorRenderCache {
 
+    private ExcavatorRenderCache() {}
+
     public static class LineSegment {
-        public final float x1, y1, z1, x2, y2, z2;
+        public final float x1;
+        public final float y1;
+        public final float z1;
+        public final float x2;
+        public final float y2;
+        public final float z2;
         public LineSegment(float x1, float y1, float z1, float x2, float y2, float z2) {
             this.x1 = x1; this.y1 = y1; this.z1 = z1;
             this.x2 = x2; this.y2 = y2; this.z2 = z2;
@@ -114,14 +121,14 @@ public class ExcavatorRenderCache {
         
         cachedBlockCount = targets.size();
 
-        LongSet targetSet = new LongOpenHashSet((int) (targets.size() / 0.75f) + 1);
+        LongSet targetSet = new LongOpenHashSet((int) ((float) targets.size() / 0.75f) + 1);
         for (BlockPos p : targets) {
             targetSet.add(StationBlockPos.asLong(p.getX(), p.getY(), p.getZ()));
         }
 
         // 輪郭メッシュ抽出ロジック
         int estimatedEdges = targets.size() * 12;
-        int initialCapacity = (int) (estimatedEdges / 0.75f) + 1;
+        int initialCapacity = (int) ((float) estimatedEdges / 0.75f) + 1;
         Long2ByteMap edgeNormals = new Long2ByteOpenHashMap(initialCapacity);
         edgeNormals.defaultReturnValue((byte) 0);
 

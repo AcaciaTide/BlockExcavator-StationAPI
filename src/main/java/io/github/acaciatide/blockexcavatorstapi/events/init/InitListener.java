@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import java.lang.invoke.MethodHandles;
 
 public class InitListener {
+
+    private InitListener() {}
     static {
         EntrypointManager.registerLookup(MethodHandles.lookup());
     }

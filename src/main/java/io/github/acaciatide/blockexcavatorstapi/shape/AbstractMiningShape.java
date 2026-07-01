@@ -19,9 +19,7 @@ public abstract class AbstractMiningShape implements MiningShape {
         if (block.getHardness() < 0.0F) return true;
 
         // 液体（バニラの水、溶岩に加え、Mod追加の液体も FluidMaterial クラスから判定）
-        if (block.material instanceof net.minecraft.block.material.FluidMaterial) return true;
-        
-        return false;
+        return block.material instanceof net.minecraft.block.material.FluidMaterial;
     }
 
     /**
@@ -39,12 +37,12 @@ public abstract class AbstractMiningShape implements MiningShape {
      */
     protected boolean canHarvest(PlayerEntity player, int blockId) {
         // 無条件破壊(forceVeinMine)がONの時はチェックをスキップ
-        if (ConfigInit.ADVANCED.forceVeinMine) {
+        if (Boolean.TRUE.equals(ConfigInit.ADVANCED.forceVeinMine)) {
             return true;
         }
 
         // Strict Tool Check がOFFの時はチェックをスキップ
-        if (!ConfigInit.ADVANCED.strictToolCheck) {
+        if (Boolean.FALSE.equals(ConfigInit.ADVANCED.strictToolCheck)) {
             return true;
         }
 

@@ -11,6 +11,8 @@ import java.util.Set;
 
 public class VeinMinerUtil {
 
+    private VeinMinerUtil() {}
+
     // 再帰呼び出しを防止するためのフラグ
     private static boolean isMining = false;
 

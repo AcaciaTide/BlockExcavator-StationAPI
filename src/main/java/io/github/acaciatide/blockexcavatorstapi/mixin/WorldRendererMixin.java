@@ -43,9 +43,9 @@ public abstract class WorldRendererMixin {
         GL11.glDisable(GL11.GL_DEPTH_TEST); // 壁越しでも見えるように深度テストを無効化
 
         // プレイヤーの移動幅（1フレーム前からのズレ）を基にしたカメラの補正値
-        double offsetX = player.lastTickX + (player.x - player.lastTickX) * (double)tickDelta;
-        double offsetY = player.lastTickY + (player.y - player.lastTickY) * (double)tickDelta;
-        double offsetZ = player.lastTickZ + (player.z - player.lastTickZ) * (double)tickDelta;
+        double offsetX = player.lastTickX + (player.x - player.lastTickX) * tickDelta;
+        double offsetY = player.lastTickY + (player.y - player.lastTickY) * tickDelta;
+        double offsetZ = player.lastTickZ + (player.z - player.lastTickZ) * tickDelta;
 
         // すべての線を「GL_LINES」モードで一括処理する
         Tessellator tessellator = Tessellator.INSTANCE;

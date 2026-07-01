@@ -12,6 +12,8 @@ import java.util.Map;
  */
 public class PlayerStateManager {
 
+    private PlayerStateManager() {}
+
     // プレイヤー名 → Excavatorキー押下状態 のマップ
     private static final Map<String, Boolean> keyStates = new HashMap<>();
 

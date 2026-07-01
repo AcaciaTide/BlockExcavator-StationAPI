@@ -4,6 +4,8 @@ import net.glasslauncher.mods.gcapi3.api.ConfigEntry;
 
 public class BlockExcavatorConfig {
 
+    private BlockExcavatorConfig() {}
+
     public static class GeneralConfig {
         @ConfigEntry(
             name = "Max Blocks to Mine",
